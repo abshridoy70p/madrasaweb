@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নুরুল কোরআন কওমী মাদ্রাসা</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c786c;
+            --secondary-color: #f8b400;
+            --light-color: #f7f7f7;
+            --dark-color: #004445;
+        }
+        
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-color);
+            border-color: var(--dark-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #333;
+        }
+        
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        
+        .status-indicator {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .online {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .offline {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .menu-btn {
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .menu-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .receipt {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 10px;
+        }
+        
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+            border-top: 2px dashed #ccc;
+            padding-top: 10px;
+            font-style: italic;
+        }
+        
+        .back-btn {
+            margin-bottom: 15px;
+        }
+        
+        .dashboard-card {
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .dashboard-card h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .dashboard-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-indicator offline" id="statusIndicator">
+        <i class="fas fa-circle"></i> অফলাইন
+    </div>
+
+    <!-- Main Container -->
+    <div class="container-fluid p-3" id="mainContainer">
+        <!-- Home Page -->
+        <div id="homePage">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">🕌 নুরুল কোরআন কওমী মাদ্রাসা</h5>
+                    <div id="currentDateTime"></div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Class Buttons -->
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-secondary" onclick="showStudentList('shishu')">
+                                <div class="card-body">
+                                    <div class="menu-icon">👶</div>
+                                    <div>শিশু জামাত</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-secondary" onclick="showStudentList('first')">
+                                <div class="card-body">
+                                    <div class="menu-icon">1️⃣</div>
+                                    <div>প্রথম জামাত</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-secondary" onclick="showStudentList('second')">
+                                <div class="card-body">
+                                    <div class="menu-icon">2️⃣</div>
+                                    <div>দ্বিতীয় জামাত</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-secondary" onclick="showStudentList('third')">
+                                <div class="card-body">
+                                    <div class="menu-icon">3️⃣</div>
+                                    <div>তৃতীয় জামাত</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-secondary" onclick="showStudentList('hifz')">
+                                <div class="card-body">
+                                    <div class="menu-icon">📖</div>
+                                    <div>হিফজ বিভাগ</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-primary" onclick="showAddStudentForm()">
+                                <div class="card-body">
+                                    <div class="menu-icon">➕</div>
+                                    <div>ছাত্র যোগ করুন</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-primary" onclick="showFeeCollectionForm()">
+                                <div class="card-body">
+                                    <div class="menu-icon">💳</div>
+                                    <div>বেতন দিন</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-warning" onclick="showUnpaidStudents()">
+                                <div class="card-body">
+                                    <div class="menu-icon">❌</div>
+                                    <div>বকেয়া ছাত্র</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-primary" onclick="showTodayPayments()">
+                                <div class="card-body">
+                                    <div class="menu-icon">✅</div>
+                                    <div>আজকের বেতনদাতা</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-primary" onclick="showDashboard()">
+                                <div class="card-body">
+                                    <div class="menu-icon">📊</div>
+                                    <div>ড্যাশবোর্ড</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card menu-btn btn-primary" onclick="showSettings()">
+                                <div class="card-body">
+                                    <div class="menu-icon">⚙️</div>
+                                    <div>সেটিংস</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Student Form -->
+        <div id="addStudentPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header">
+                    <h5>➕ ছাত্র যোগ করুন</h5>
+                </div>
+                <div class="card-body">
+                    <form id="studentForm">
+                        <div class="mb-3">
+                            <label for="studentClass" class="form-label">ক্লাস নির্বাচন করুন</label>
+                            <select class="form-select" id="studentClass" required>
+                                <option value="" selected disabled>ক্লাস নির্বাচন করুন</option>
+                                <option value="shishu">শিশু জামাত</option>
+                                <option value="first">প্রথম জামাত</option>
+                                <option value="second">দ্বিতীয় জামাত</option>
+                                <option value="third">তৃতীয় জামাত</option>
+                                <option value="hifz">হিফজ বিভাগ</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentName" class="form-label">ছাত্রের নাম</label>
+                            <input type="text" class="form-control" id="studentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fatherName" class="form-label">পিতার নাম</label>
+                            <input type="text" class="form-control" id="fatherName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="motherName" class="form-label">মাতার নাম (ঐচ্ছিক)</label>
+                            <input type="text" class="form-control" id="motherName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobileNumber" class="form-label">মোবাইল নম্বর</label>
+                            <input type="tel" class="form-control" id="mobileNumber">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">ঠিকানা</label>
+                            <textarea class="form-control" id="address" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="admissionDate" class="form-label">ভর্তি তারিখ</label>
+                            <input type="date" class="form-control" id="admissionDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="monthlyFee" class="form-label">মাসিক বেতন</label>
+                            <input type="number" class="form-control" id="monthlyFee" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">সংরক্ষণ করুন</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List -->
+        <div id="studentListPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 id="studentListTitle">ছাত্র তালিকা</h5>
+                    <div>
+                        <input type="text" class="form-control form-control-sm" id="studentSearch" placeholder="সার্চ করুন...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>নাম</th>
+                                    <th>মাসিক বেতন</th>
+                                    <th>পেইড মাস</th>
+                                    <th>বকেয়া মাস</th>
+                                    <th>অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentListTable">
+                                <!-- Student list will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center" id="studentPagination">
+                            <!-- Pagination will be added here -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee Collection Form -->
+        <div id="feeCollectionPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header">
+                    <h5>💳 বেতন সংগ্রহ</h5>
+                </div>
+                <div class="card-body">
+                    <form id="feeCollectionForm">
+                        <div class="mb-3">
+                            <label for="feeClass" class="form-label">ক্লাস নির্বাচন করুন</label>
+                            <select class="form-select" id="feeClass" required>
+                                <option value="" selected disabled>ক্লাস নির্বাচন করুন</option>
+                                <option value="shishu">শিশু জামাত</option>
+                                <option value="first">প্রথম জামাত</option>
+                                <option value="second">দ্বিতীয় জামাত</option>
+                                <option value="third">তৃতীয় জামাত</option>
+                                <option value="hifz">হিফজ বিভাগ</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentSelect" class="form-label">ছাত্র নির্বাচন করুন</label>
+                            <select class="form-select" id="studentSelect" required>
+                                <option value="" selected disabled>প্রথমে ক্লাস নির্বাচন করুন</option>
+                            <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="monthlyFeeDisplay" class="form-label">মাসিক বেতন</label>
+                            <input type="text" class="form-control" id="monthlyFeeDisplay" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paidMonths" class="form-label">কত মাসের বেতন</label>
+                            <input type="number" class="form-control" id="paidMonths" min="1" value="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amountPaid" class="form-label">পরিমাণ</label>
+                            <input type="number" class="form-control" id="amountPaid" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">পেমেন্ট পদ্ধতি</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="cash">ক্যাশ</option>
+                                <option value="bkash">বিকাশ</option>
+                                <option value="nagad">নগদ</option>
+                                <option value="bank">ব্যাংক ট্রান্সফার</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentDate" class="form-label">পেমেন্ট তারিখ</label>
+                            <input type="date" class="form-control" id="paymentDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">সংরক্ষণ করুন</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Receipt (hidden by default) -->
+            <div class="card mt-4 hidden" id="receiptContainer">
+                <div class="card-header">
+                    <h5>পেমেন্ট রিসিপ্ট</h5>
+                </div>
+                <div class="card-body">
+                    <div class="receipt" id="paymentReceipt">
+                        <div class="receipt-header">
+                            <h4>নুরুল কোরআন কওমী মাদ্রাসা</h4>
+                            <p>বেতন রিসিপ্ট</p>
+                        </div>
+                        <div class="receipt-body">
+                            <p><strong>রিসিপ্ট নং:</strong> <span id="receiptNumber"></span></p>
+                            <p><strong>তারিখ:</strong> <span id="receiptDate"></span></p>
+                            <p><strong>ছাত্রের নাম:</strong> <span id="receiptStudentName"></span></p>
+                            <p><strong>পিতার নাম:</strong> <span id="receiptFatherName"></span></p>
+                            <p><strong>ক্লাস:</strong> <span id="receiptClass"></span></p>
+                            <p><strong>মাসিক বেতন:</strong> <span id="receiptMonthlyFee"></span></p>
+                            <p><strong>মাস সংখ্যা:</strong> <span id="receiptMonths"></span></p>
+                            <p><strong>মোট টাকা:</strong> <span id="receiptAmount"></span></p>
+                            <p><strong>পেমেন্ট পদ্ধতি:</strong> <span id="receiptMethod"></span></p>
+                        </div>
+                        <div class="receipt-footer">
+                            <p>ধন্যবাদান্তে</p>
+                            <p>মাদ্রাসা কর্তৃপক্ষ</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <button class="btn btn-primary" onclick="printReceipt()">
+                            <i class="fas fa-print"></i> প্রিন্ট করুন
+                        </button>
+                        <button class="btn btn-success" onclick="saveReceipt()">
+                            <i class="fas fa-save"></i> সেভ করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unpaid Students -->
+        <div id="unpaidStudentsPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header">
+                    <h5>❌ বকেয়া ছাত্র</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="unpaidTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="shishu-tab" data-bs-toggle="tab" data-bs-target="#shishu-tab-pane" type="button" role="tab">শিশু জামাত</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="first-tab" data-bs-toggle="tab" data-bs-target="#first-tab-pane" type="button" role="tab">প্রথম জামাত</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="second-tab" data-bs-toggle="tab" data-bs-target="#second-tab-pane" type="button" role="tab">দ্বিতীয় জামাত</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="third-tab" data-bs-toggle="tab" data-bs-target="#third-tab-pane" type="button" role="tab">তৃতীয় জামাত</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="hifz-tab" data-bs-toggle="tab" data-bs-target="#hifz-tab-pane" type="button" role="tab">হিফজ বিভাগ</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3 border border-top-0 rounded-bottom" id="unpaidTabContent">
+                        <div class="tab-pane fade show active" id="shishu-tab-pane" role="tabpanel">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>নাম</th>
+                                        <th>বকেয়া মাস</th>
+                                        <th>মোট বকেয়া</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shishuUnpaidList">
+                                    <!-- Unpaid students will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="first-tab-pane" role="tabpanel">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>নাম</th>
+                                        <th>বকেয়া মাস</th>
+                                        <th>মোট বকেয়া</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="firstUnpaidList">
+                                    <!-- Unpaid students will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="second-tab-pane" role="tabpanel">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>নাম</th>
+                                        <th>বকেয়া মাস</th>
+                                        <th>মোট বকেয়া</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="secondUnpaidList">
+                                    <!-- Unpaid students will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="third-tab-pane" role="tabpanel">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>নাম</th>
+                                        <th>বকেয়া মাস</th>
+                                        <th>মোট বকেয়া</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="thirdUnpaidList">
+                                    <!-- Unpaid students will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="hifz-tab-pane" role="tabpanel">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>নাম</th>
+                                        <th>বকেয়া মাস</th>
+                                        <th>মোট বকেয়া</th>
+                                        <th>অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hifzUnpaidList">
+                                    <!-- Unpaid students will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Payments -->
+        <div id="todayPaymentsPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>✅ আজকের বেতনদাতা</h5>
+                    <div id="todayDate"></div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ছাত্রের নাম</th>
+                                    <th>ক্লাস</th>
+                                    <th>পরিমাণ</th>
+                                    <th>পদ্ধতি</th>
+                                    <th>সময়</th>
+                                </tr>
+                            </thead>
+                            <tbody id="todayPaymentsList">
+                                <!-- Today's payments will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboardPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header">
+                    <h5>📊 ড্যাশবোর্ড</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="card dashboard-card">
+                                <div class="card-body">
+                                    <h2>মোট ছাত্র</h2>
+                                    <div class="value text-primary" id="totalStudents">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card dashboard-card">
+                                <div class="card-body">
+                                    <h2>মোট আদায়</h2>
+                                    <div class="value text-success" id="totalCollection">0৳</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card dashboard-card">
+                                <div class="card-body">
+                                    <h2>মোট বকেয়া</h2>
+                                    <div class="value text-danger" id="totalDue">0৳</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>ক্লাস অনুযায়ী ছাত্র সংখ্যা</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="classChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5>আজকের বেতন আদায়</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="todayChart" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>আজকের ভর্তি</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>নাম</th>
+                                                <th>ক্লাস</th>
+                                                <th>তারিখ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="todayAdmissions">
+                                            <!-- Today's admissions will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>আজকের বেতন</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>নাম</th>
+                                                <th>পরিমাণ</th>
+                                                <th>পদ্ধতি</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="todayFees">
+                                            <!-- Today's fees will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settingsPage" class="hidden">
+            <button class="btn btn-secondary back-btn mb-3" onclick="backToHome()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div class="card">
+                <div class="card-header">
+                    <h5>⚙️ সেটিংস</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>ব্যাকআপ ও সিঙ্ক</h5>
+                        <div class="alert alert-info">
+                            সর্বশেষ সিঙ্ক: <span id="lastSyncTime">কখনোই হয়নি</span>
+                        </div>
+                        <button class="btn btn-primary me-2" onclick="syncData()">
+                            <i class="fas fa-sync"></i> এখনই সিঙ্ক করুন
+                        </button>
+                        <button class="btn btn-success" onclick="backupData()">
+                            <i class="fas fa-download"></i> ব্যাকআপ ডাউনলোড
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>ডাটা ম্যানেজমেন্ট</h5>
+                        <div class="alert alert-warning">
+                            সতর্কতা: এই অপশনগুলি ডাটা মুছে ফেলতে পারে
+                        </div>
+                        <button class="btn btn-danger me-2" onclick="clearLocalData()">
+                            <i class="fas fa-trash"></i> লোকাল ডাটা ক্লিয়ার
+                        </button>
+                        <button class="btn btn-warning" onclick="resetApp()">
+                            <i class="fas fa-redo"></i> অ্যাপ রিসেট
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <h5>অ্যাপ তথ্য</h5>
+                        <div class="alert alert-light">
+                            <p><strong>সংস্করণ:</strong> 1.0.0</p>
+                            <p><strong>ডেভেলপার:</strong> নুরুল কোরআন কওমী মাদ্রাসা</p>
+                            <p><strong>শেষ আপডেট:</strong> <span id="appLastUpdate"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                This is a toast message.
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        // Global variables
+        let currentPage = 'homePage';
+        let currentClass = '';
+        let studentsData = {
+            shishu: [],
+            first: [],
+            second: [],
+            third: [],
+            hifz: []
+        };
+        let feesData = [];
+        let todayFeesData = [];
+        let isOnline = false;
+        let pendingSync = [];
+        let lastSyncTime = null;
+        
+        // Google Sheets configuration
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyqE2u3iIUQdBG6SmMZG7nf9dCZ6P5WGv_RtDVeUmwe8pwQFqgSZLiSV9Kk2SXw3jAe/exec';
+        const sheetsConfig = {
+            students: {
+                shishu: 'shishu_students',
+                first: 'first_students',
+                second: 'second_students',
+                third: 'third_students',
+                hifz: 'hifz_students'
+            },
+            fees: 'fees_collection',
+            todayFees: 'today_fees'
+        };
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide preloader after 1.5 seconds
+            setTimeout(() => {
+                document.querySelector('.preloader').style.display = 'none';
+            }, 1500);
+            
+            // Set current date and time
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Check online status
+            checkOnlineStatus();
+            window.addEventListener('online', checkOnlineStatus);
+            window.addEventListener('offline', checkOnlineStatus);
+            
+            // Initialize forms
+            initStudentForm();
+            initFeeCollectionForm();
+            
+            // Load data from localStorage
+            loadLocalData();
+            
+            // Try to sync with Google Sheets
+            if (isOnline) {
+                syncData();
+            }
+            
+            // Initialize charts
+            initCharts();
+            
+            // Set last update date
+            document.getElementById('appLastUpdate').textContent = new Date().toLocaleDateString('bn-BD');
+        });
+        
+        // Function to update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            const formattedDate = now.toLocaleDateString('bn-BD', options);
+            document.getElementById('currentDateTime').textContent = formattedDate;
+            
+            // For today's payments page
+            const todayOptions = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric'
+            };
+            document.getElementById('todayDate').textContent = now.toLocaleDateString('bn-BD', todayOptions);
+            
+            // Set current date in date inputs
+            const todayISO = now.toISOString().split('T')[0];
+            document.getElementById('admissionDate').value = todayISO;
+            document.getElementById('paymentDate').value = todayISO;
+        }
+        
+        // Function to check online status
+        function checkOnlineStatus() {
+            isOnline = navigator.onLine;
+            const statusIndicator = document.getElementById('statusIndicator');
+            
+            if (isOnline) {
+                statusIndicator.className = 'status-indicator online';
+                statusIndicator.innerHTML = '<i class="fas fa-circle"></i> অনলাইন';
+                
+                // Try to sync pending data when coming online
+                if (pendingSync.length > 0) {
+                    syncPendingData();
+                }
+            } else {
+                statusIndicator.className = 'status-indicator offline';
+                statusIndicator.innerHTML = '<i class="fas fa-circle"></i> অফলাইন';
+            }
+        }
+        
+        // Function to show a page and hide others
+        function showPage(pageId) {
+            document.getElementById(currentPage).classList.add('hidden');
+            document.getElementById(pageId).classList.remove('hidden');
+            currentPage = pageId;
+            
+            // Load specific data if needed
+            switch(pageId) {
+                case 'studentListPage':
+                    renderStudentList(currentClass);
+                    break;
+                case 'unpaidStudentsPage':
+                    renderUnpaidStudents();
+                    break;
+                case 'todayPaymentsPage':
+                    renderTodayPayments();
+                    break;
+                case 'dashboardPage':
+                    renderDashboard();
+                    break;
+            }
+        }
+        
+        // Function to go back to home page
+        function backToHome() {
+            showPage('homePage');
+        }
+        
+        // Function to show add student form
+        function showAddStudentForm() {
+            showPage('addStudentPage');
+            document.getElementById('studentForm').reset();
+        }
+        
+        // Function to show student list for a class
+        function showStudentList(className) {
+            currentClass = className;
+            const classNames = {
+                shishu: 'শিশু জামাত',
+                first: 'প্রথম জামাত',
+                second: 'দ্বিতীয় জামাত',
+                third: 'তৃতীয় জামাত',
+                hifz: 'হিফজ বিভাগ'
+            };
+            document.getElementById('studentListTitle').textContent = `${classNames[className]} - ছাত্র তালিকা`;
+            showPage('studentListPage');
+        }
+        
+        // Function to show fee collection form
+        function showFeeCollectionForm() {
+            showPage('feeCollectionPage');
+            document.getElementById('feeCollectionForm').reset();
+            document.getElementById('receiptContainer').classList.add('hidden');
+        }
+        
+        // Function to show unpaid students
+        function showUnpaidStudents() {
+            showPage('unpaidStudentsPage');
+        }
+        
+        // Function to show today's payments
+        function showTodayPayments() {
+            showPage('todayPaymentsPage');
+        }
+        
+        // Function to show dashboard
+        function showDashboard() {
+            showPage('dashboardPage');
+        }
+        
+        // Function to show settings
+        function showSettings() {
+            showPage('settingsPage');
+            if (lastSyncTime) {
+                document.getElementById('lastSyncTime').textContent = lastSyncTime.toLocaleString('bn-BD');
+            }
+        }
+        
+        // Function to initialize student form
+        function initStudentForm() {
+            const form = document.getElementById('studentForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                if (!form.checkValidity()) {
+                    showToast('ত্রুটি', 'সব প্রয়োজনীয় তথ্য পূরণ করুন', 'danger');
+                    return;
+                }
+                
+                // Get form data
+                const studentClass = document.getElementById('studentClass').value;
+                const studentName = document.getElementById('studentName').value;
+                const fatherName = document.getElementById('fatherName').value;
+                const motherName = document.getElementById('motherName').value;
+                const mobileNumber = document.getElementById('mobileNumber').value;
+                const address = document.getElementById('address').value;
+                const admissionDate = document.getElementById('admissionDate').value;
+                const monthlyFee = document.getElementById('monthlyFee').value;
+                
+                // Check for duplicate student
+                const isDuplicate = studentsData[studentClass].some(student => 
+                    student.name === studentName && student.father === fatherName
+                );
+                
+                if (isDuplicate) {
+                    showToast('ত্রুটি', 'এই ছাত্র ইতিমধ্যে আছে', 'danger');
+                    return;
+                }
+                
+                // Create student object
+                const student = {
+                    id: Date.now().toString(),
+                    class: studentClass,
+                    name: studentName,
+                    father: fatherName,
+                    mother: motherName,
+                    mobile: mobileNumber,
+                    address: address,
+                    admissionDate: admissionDate,
+                    monthlyFee: monthlyFee,
+                    paidMonths: 0,
+                    lastPayment: null,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add to local data
+                studentsData[studentClass].push(student);
+                
+                // Save to localStorage
+                saveLocalData();
+                
+                // Try to sync with Google Sheets
+                if (isOnline) {
+                    syncStudentToSheet(student);
+                } else {
+                    pendingSync.push({ type: 'student', data: student });
+                    showToast('সতর্কতা', 'অফলাইনে সংরক্ষিত, অনলাইনে হলে সিঙ্ক হবে', 'warning');
+                }
+                
+                // Show success message
+                showToast('সফল', 'ছাত্র সফলভাবে যোগ হয়েছে', 'success');
+                
+                // Reset form
+                form.reset();
+                document.getElementById('admissionDate').value = new Date().toISOString().split('T')[0];
+                
+                // If we're on the student list page, refresh it
+                if (currentPage === 'studentListPage' && currentClass === studentClass) {
+                    renderStudentList(studentClass);
+                }
+                
+                // Update dashboard if visible
+                if (currentPage === 'dashboardPage') {
+                    renderDashboard();
+                }
+            });
+        }
+        
+        // Function to initialize fee collection form
+        function initFeeCollectionForm() {
+            const form = document.getElementById('feeCollectionForm');
+            const feeClassSelect = document.getElementById('feeClass');
+            const studentSelect = document.getElementById('studentSelect');
+            
+            // When class changes, populate students
+            feeClassSelect.addEventListener('change', function() {
+                const selectedClass = this.value;
+                studentSelect.innerHTML = '<option value="" selected disabled>ছাত্র নির্বাচন করুন</option>';
+                
+                if (selectedClass) {
+                    studentsData[selectedClass].forEach(student => {
+                        const option = document.createElement('option');
+                        option.value = student.id;
+                        option.textContent = `${student.name} (${student.father})`;
+                        option.setAttribute('data-fee', student.monthlyFee);
+                        studentSelect.appendChild(option);
+                    });
+                }
+            });
+            
+            // When student changes, show monthly fee
+            studentSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const monthlyFee = selectedOption.getAttribute('data-fee');
+                document.getElementById('monthlyFeeDisplay').value = monthlyFee;
+                document.getElementById('amountPaid').value = monthlyFee;
+            });
+            
+            // When months change, update amount
+            document.getElementById('paidMonths').addEventListener('change', function() {
+                const monthlyFee = document.getElementById('monthlyFeeDisplay').value;
+                const months = this.value;
+                document.getElementById('amountPaid').value = monthlyFee * months;
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                if (!form.checkValidity()) {
+                    showToast('ত্রুটি', 'সব প্রয়োজনীয় তথ্য পূরণ করুন', 'danger');
+                    return;
+                }
+                
+                // Get form data
+                const feeClass = document.getElementById('feeClass').value;
+                const studentId = document.getElementById('studentSelect').value;
+                const monthlyFee = document.getElementById('monthlyFeeDisplay').value;
+                const paidMonths = document.getElementById('paidMonths').value;
+                const amountPaid = document.getElementById('amountPaid').value;
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                const paymentDate = document.getElementById('paymentDate').value;
+                
+                // Find student
+                const student = studentsData[feeClass].find(s => s.id === studentId);
+                if (!student) {
+                    showToast('ত্রুটি', 'ছাত্র পাওয়া যায়নি', 'danger');
+                    return;
+                }
+                
+                // Create fee payment object
+                const feePayment = {
+                    id: Date.now().toString(),
+                    studentId: studentId,
+                    studentName: student.name,
+                    fatherName: student.father,
+                    class: feeClass,
+                    monthlyFee: monthlyFee,
+                    paidMonths: paidMonths,
+                    amountPaid: amountPaid,
+                    paymentMethod: paymentMethod,
+                    paymentDate: paymentDate,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Add to local data
+                feesData.push(feePayment);
+                todayFeesData.push(feePayment);
+                
+                // Update student's payment info
+                student.paidMonths = (student.paidMonths || 0) + parseInt(paidMonths);
+                student.lastPayment = paymentDate;
+                
+                // Save to localStorage
+                saveLocalData();
+                
+                // Try to sync with Google Sheets
+                if (isOnline) {
+                    syncFeeToSheet(feePayment);
+                } else {
+                    pendingSync.push({ type: 'fee', data: feePayment });
+                    showToast('সতর্কতা', 'অফলাইনে সংরক্ষিত, অনলাইনে হলে সিঙ্ক হবে', 'warning');
+                }
+                
+                // Show receipt
+                showReceipt(feePayment, student);
+                
+                // Show success message
+                showToast('সফল', 'বেতন সফলভাবে সংরক্ষিত হয়েছে', 'success');
+                
+                // If we're on the student list page, refresh it
+                if (currentPage === 'studentListPage' && currentClass === feeClass) {
+                    renderStudentList(feeClass);
+                }
+                
+                // Update unpaid students if visible
+                if (currentPage === 'unpaidStudentsPage') {
+                    renderUnpaidStudents();
+                }
+                
+                // Update dashboard if visible
+                if (currentPage === 'dashboardPage') {
+                    renderDashboard();
+                }
+            });
+        }
+        
+        // Function to show payment receipt
+        function showReceipt(feePayment, student) {
+            document.getElementById('receiptContainer').classList.remove('hidden');
+            
+            // Fill receipt details
+            document.getElementById('receiptNumber').textContent = feePayment.id.slice(-6);
+            document.getElementById('receiptDate').textContent = new Date(feePayment.paymentDate).toLocaleDateString('bn-BD');
+            document.getElementById('receiptStudentName').textContent = student.name;
+            document.getElementById('receiptFatherName').textContent = student.father;
+            
+            const classNames = {
+                shishu: 'শিশু জামাত',
+                first: 'প্রথম জামাত',
+                second: 'দ্বিতীয় জামাত',
+                third: 'তৃতীয় জামাত',
+                hifz: 'হিফজ বিভাগ'
+            };
+            
+            document.getElementById('receiptClass').textContent = classNames[feePayment.class];
+            document.getElementById('receiptMonthlyFee').textContent = `${feePayment.monthlyFee}৳`;
+            document.getElementById('receiptMonths').textContent = feePayment.paidMonths;
+            document.getElementById('receiptAmount').textContent = `${feePayment.amountPaid}৳`;
+            document.getElementById('receiptMethod').textContent = 
+                feePayment.paymentMethod === 'cash' ? 'ক্যাশ' : 
+                feePayment.paymentMethod === 'bkash' ? 'বিকাশ' :
+                feePayment.paymentMethod === 'nagad' ? 'নগদ' : 'ব্যাংক ট্রান্সফার';
+        }
+        
+        // Function to print receipt
+        function printReceipt() {
+            const receipt = document.getElementById('paymentReceipt');
+            const printWindow = window.open('', '', 'width=600,height=600');
+            printWindow.document.write('<html><head><title>বেতন রিসিপ্ট</title>');
+            printWindow.document.write('<style>body{font-family:Arial;padding:20px;}');
+            printWindow.document.write('.receipt{max-width:400px;margin:0 auto;border:1px solid #ccc;padding:20px;}');
+            printWindow.document.write('.receipt-header,.receipt-footer{text-align:center;margin:10px 0;}');
+            printWindow.document.write('</style></head><body>');
+            printWindow.document.write(receipt.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        }
+        
+        // Function to save receipt as PDF
+        function saveReceipt() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add receipt content to PDF
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(16);
+            doc.text('নুরুল কোরআন কওমী মাদ্রাসা', 105, 15, { align: 'center' });
+            doc.setFontSize(12);
+            doc.text('বেতন রিসিপ্ট', 105, 22, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.text(`রিসিপ্ট নং: ${document.getElementById('receiptNumber').textContent}`, 15, 35);
+            doc.text(`তারিখ: ${document.getElementById('receiptDate').textContent}`, 15, 42);
+            doc.text(`ছাত্রের নাম: ${document.getElementById('receiptStudentName').textContent}`, 15, 49);
+            doc.text(`পিতার নাম: ${document.getElementById('receiptFatherName').textContent}`, 15, 56);
+            doc.text(`ক্লাস: ${document.getElementById('receiptClass').textContent}`, 15, 63);
+            doc.text(`মাসিক বেতন: ${document.getElementById('receiptMonthlyFee').textContent}`, 15, 70);
+            doc.text(`মাস সংখ্যা: ${document.getElementById('receiptMonths').textContent}`, 15, 77);
+            doc.text(`মোট টাকা: ${document.getElementById('receiptAmount').textContent}`, 15, 84);
+            doc.text(`পেমেন্ট পদ্ধতি: ${document.getElementById('receiptMethod').textContent}`, 15, 91);
+            
+            doc.setFontSize(10);
+            doc.text('ধন্যবাদান্তে', 105, 110, { align: 'center' });
+            doc.text('মাদ্রাসা কর্তৃপক্ষ', 105, 117, { align: 'center' });
+            
+            // Save the PDF
+            doc.save(`বেতন_রিসিপ্ট_${document.getElementById('receiptNumber').textContent}.pdf`);
+        }
+        
+        // Function to render student list
+        function renderStudentList(className) {
+            const students = studentsData[className];
+            const tableBody = document.getElementById('studentListTable');
+            tableBody.innerHTML = '';
+            
+            if (students.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" class="text-center">কোনো ছাত্র পাওয়া যায়নি</td>`;
+                tableBody.appendChild(row);
+                return;
+            }
+            
+            students.forEach(student => {
+                const dueMonths = calculateDueMonths(student);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}<br><small>${student.father}</small></td>
+                    <td>${student.monthlyFee}৳</td>
+                    <td>${student.paidMonths || 0}</td>
+                    <td>${dueMonths}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="collectFee('${className}', '${student.id}')">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="editStudent('${className}', '${student.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteStudent('${className}', '${student.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Initialize pagination
+            initPagination(students.length);
+        }
+        
+        // Function to calculate due months for a student
+        function calculateDueMonths(student) {
+            if (!student.admissionDate) return 0;
+            
+            const admissionDate = new Date(student.admissionDate);
+            const today = new Date();
+            const monthsDiff = (today.getFullYear() - admissionDate.getFullYear()) * 12 + 
+                              (today.getMonth() - admissionDate.getMonth());
+            
+            const paidMonths = student.paidMonths || 0;
+            return Math.max(0, monthsDiff - paidMonths);
+        }
+        
+        // Function to initialize pagination
+        function initPagination(totalItems, itemsPerPage = 10) {
+            const pagination = document.getElementById('studentPagination');
+            pagination.innerHTML = '';
+            
+            const pageCount = Math.ceil(totalItems / itemsPerPage);
+            
+            for (let i = 1; i <= pageCount; i++) {
+                const li = document.createElement('li');
+                li.className = 'page-item';
+                li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                li.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Implement pagination logic here
+                });
+                pagination.appendChild(li);
+            }
+        }
+        
+        // Function to collect fee for a student
+        function collectFee(className, studentId) {
+            showPage('feeCollectionPage');
+            document.getElementById('feeClass').value = className;
+            
+            // Trigger change event to populate students
+            const event = new Event('change');
+            document.getElementById('feeClass').dispatchEvent(event);
+            
+            // Set the student
+            document.getElementById('studentSelect').value = studentId;
+            
+            // Trigger change event to show monthly fee
+            const student = studentsData[className].find(s => s.id === studentId);
+            if (student) {
+                document.getElementById('monthlyFeeDisplay').value = student.monthlyFee;
+                document.getElementById('amountPaid').value = student.monthlyFee;
+            }
+        }
+        
+        // Function to edit a student
+        function editStudent(className, studentId) {
+            showPage('addStudentPage');
+            const student = studentsData[className].find(s => s.id === studentId);
+            
+            if (student) {
+                document.getElementById('studentClass').value = student.class;
+                document.getElementById('studentName').value = student.name;
+                document.getElementById('fatherName').value = student.father;
+                document.getElementById('motherName').value = student.mother || '';
+                document.getElementById('mobileNumber').value = student.mobile || '';
+                document.getElementById('address').value = student.address || '';
+                document.getElementById('admissionDate').value = student.admissionDate || '';
+                document.getElementById('monthlyFee').value = student.monthlyFee || '';
+                
+                // Change form title
+                document.querySelector('#addStudentPage .card-header h5').textContent = '✏️ ছাত্র সম্পাদনা করুন';
+                
+                // Modify submit button
+                const submitBtn = document.querySelector('#studentForm button[type="submit"]');
+                submitBtn.textContent = 'আপডেট করুন';
+                submitBtn.onclick = function(e) {
+                    e.preventDefault();
+                    updateStudent(className, studentId);
+                };
+            }
+        }
+        
+        // Function to update a student
+        function updateStudent(className, studentId) {
+            const form = document.getElementById('studentForm');
+            
+            // Validate form
+            if (!form.checkValidity()) {
+                showToast('ত্রুটি', 'সব প্রয়োজনীয় তথ্য পূরণ করুন', 'danger');
+                return;
+            }
+            
+            // Get form data
+            const studentClass = document.getElementById('studentClass').value;
+            const studentName = document.getElementById('studentName').value;
+            const fatherName = document.getElementById('fatherName').value;
+            const motherName = document.getElementById('motherName').value;
+            const mobileNumber = document.getElementById('mobileNumber').value;
+            const address = document.getElementById('address').value;
+            const admissionDate = document.getElementById('admissionDate').value;
+            const monthlyFee = document.getElementById('monthlyFee').value;
+            
+            // Find student
+            const studentIndex = studentsData[className].findIndex(s => s.id === studentId);
+            if (studentIndex === -1) {
+                showToast('ত্রুটি', 'ছাত্র পাওয়া যায়নি', 'danger');
+                return;
+            }
+            
+            // Update student data
+            const updatedStudent = {
+                ...studentsData[className][studentIndex],
+                class: studentClass,
+                name: studentName,
+                father: fatherName,
+                mother: motherName,
+                mobile: mobileNumber,
+                address: address,
+                admissionDate: admissionDate,
+                monthlyFee: monthlyFee
+            };
+            
+            // If class changed, move student to new class
+            if (className !== studentClass) {
+                studentsData[className].splice(studentIndex, 1);
+                studentsData[studentClass].push(updatedStudent);
+            } else {
+                studentsData[className][studentIndex] = updatedStudent;
+            }
+            
+            // Save to localStorage
+            saveLocalData();
+            
+            // Try to sync with Google Sheets
+            if (isOnline) {
+                syncStudentToSheet(updatedStudent, true);
+            } else {
+                pendingSync.push({ type: 'student-update', data: updatedStudent });
+                showToast('সতর্কতা', 'অফলাইনে সংরক্ষিত, অনলাইনে হলে সিঙ্ক হবে', 'warning');
+            }
+            
+            // Show success message
+            showToast('সফল', 'ছাত্রের তথ্য আপডেট হয়েছে', 'success');
+            
+            // Reset form and go back to student list
+            form.reset();
+            document.getElementById('admissionDate').value = new Date().toISOString().split('T')[0];
+            
+            // Change form title back
+            document.querySelector('#addStudentPage .card-header h5').textContent = '➕ ছাত্র যোগ করুন';
+            
+            // Modify submit button back
+            const submitBtn = document.querySelector('#studentForm button[type="submit"]');
+            submitBtn.textContent = 'সংরক্ষণ করুন';
+            submitBtn.onclick = null;
+            
+            // Show student list
+            showStudentList(studentClass);
+        }
+        
+        // Function to delete a student
+        function deleteStudent(className, studentId) {
+            if (!confirm('আপনি কি নিশ্চিত এই ছাত্র মুছে ফেলতে চান?')) {
+                return;
+            }
+            
+            const studentIndex = studentsData[className].findIndex(s => s.id === studentId);
+            if (studentIndex === -1) {
+                showToast('ত্রুটি', 'ছাত্র পাওয়া যায়নি', 'danger');
+                return;
+            }
+            
+            const deletedStudent = studentsData[className][studentIndex];
+            studentsData[className].splice(studentIndex, 1);
+            
+            // Save to localStorage
+            saveLocalData();
+            
+            // Try to sync with Google Sheets
+            if (isOnline) {
+                deleteStudentFromSheet(deletedStudent);
+            } else {
+                pendingSync.push({ type: 'student-delete', data: deletedStudent });
+                showToast('সতর্কতা', 'অফলাইনে মুছে ফেলা হয়েছে, অনলাইনে হলে সিঙ্ক হবে', 'warning');
+            }
+            
+            // Show success message
+            showToast('সফল', 'ছাত্র মুছে ফেলা হয়েছে', 'success');
+            
+            // Refresh student list
+            renderStudentList(className);
+            
+            // Update dashboard if visible
+            if (currentPage === 'dashboardPage') {
+                renderDashboard();
+            }
+        }
+        
+        // Function to render unpaid students
+        function renderUnpaidStudents() {
+            const classTabs = ['shishu', 'first', 'second', 'third', 'hifz'];
+            
+            classTabs.forEach(className => {
+                const unpaidList = document.getElementById(`${className}UnpaidList`);
+                unpaidList.innerHTML = '';
+                
+                const unpaidStudents = studentsData[className].filter(student => {
+                    const dueMonths = calculateDueMonths(student);
+                    return dueMonths > 0;
+                });
+                
+                if (unpaidStudents.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="4" class="text-center">কোনো বকেয়া ছাত্র পাওয়া যায়নি</td>`;
+                    unpaidList.appendChild(row);
+                    return;
+                }
+                
+                unpaidStudents.forEach(student => {
+                    const dueMonths = calculateDueMonths(student);
+                    const totalDue = dueMonths * student.monthlyFee;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name}<br><small>${student.father}</small></td>
+                        <td>${dueMonths} মাস</td>
+                        <td>${totalDue}৳</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="collectFee('${className}', '${student.id}')">
+                                <i class="fas fa-money-bill-wave"></i> বেতন দিন
+                            </button>
+                            ${student.mobile ? `
+                            <a href="tel:${student.mobile}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-phone"></i> কল করুন
+                            </a>
+                            ` : ''}
+                        </td>
+                    `;
+                    unpaidList.appendChild(row);
+                });
+            });
+        }
+        
+        // Function to render today's payments
+        function renderTodayPayments() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayPayments = todayFeesData.filter(fee => fee.paymentDate === today);
+            const tableBody = document.getElementById('todayPaymentsList');
+            tableBody.innerHTML = '';
+            
+            if (todayPayments.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" class="text-center">আজকে কোনো বেতন আদায় হয়নি</td>`;
+                tableBody.appendChild(row);
+                return;
+            }
+            
+            const classNames = {
+                shishu: 'শিশু জামাত',
+                first: 'প্রথম জামাত',
+                second: 'দ্বিতীয় জামাত',
+                third: 'তৃতীয় জামাত',
+                hifz: 'হিফজ বিভাগ'
+            };
+            
+            todayPayments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${payment.studentName}</td>
+                    <td>${classNames[payment.class]}</td>
+                    <td>${payment.amountPaid}৳</td>
+                    <td>
+                        ${payment.paymentMethod === 'cash' ? 'ক্যাশ' : 
+                          payment.paymentMethod === 'bkash' ? 'বিকাশ' :
+                          payment.paymentMethod === 'nagad' ? 'নগদ' : 'ব্যাংক ট্রান্সফার'}
+                    </td>
+                    <td>${new Date(payment.createdAt).toLocaleTimeString('bn-BD')}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Function to render dashboard
+        function renderDashboard() {
+            // Calculate totals
+            const totalStudents = Object.values(studentsData).reduce((sum, students) => sum + students.length, 0);
+            const totalCollection = feesData.reduce((sum, fee) => sum + parseInt(fee.amountPaid), 0);
+            
+            // Calculate total due
+            let totalDue = 0;
+            Object.values(studentsData).forEach(students => {
+                students.forEach(student => {
+                    const dueMonths = calculateDueMonths(student);
+                    totalDue += dueMonths * student.monthlyFee;
+                });
+            });
+            
+            // Update dashboard numbers
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('totalCollection').textContent = `${totalCollection.toLocaleString('bn-BD')}৳`;
+            document.getElementById('totalDue').textContent = `${totalDue.toLocaleString('bn-BD')}৳`;
+            
+            // Update today's admissions
+            const today = new Date().toISOString().split('T')[0];
+            const todayAdmissions = [];
+            
+            Object.values(studentsData).forEach(students => {
+                students.forEach(student => {
+                    if (student.admissionDate === today) {
+                        todayAdmissions.push(student);
+                    }
+                });
+            });
+            
+            const todayAdmissionsList = document.getElementById('todayAdmissions');
+            todayAdmissionsList.innerHTML = '';
+            
+            if (todayAdmissions.length === 0) {
+                todayAdmissionsList.innerHTML = '<tr><td colspan="3" class="text-center">আজকে কোনো ভর্তি হয়নি</td></tr>';
+            } else {
+                todayAdmissions.forEach(student => {
+                    const classNames = {
+                        shishu: 'শিশু জামাত',
+                        first: 'প্রথম জামাত',
+                        second: 'দ্বিতীয় জামাত',
+                        third: 'তৃতীয় জামাত',
+                        hifz: 'হিফজ বিভাগ'
+                    };
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.name}</td>
+                        <td>${classNames[student.class]}</td>
+                        <td>${new Date(student.admissionDate).toLocaleDateString('bn-BD')}</td>
+                    `;
+                    todayAdmissionsList.appendChild(row);
+                });
+            }
+            
+            // Update today's fees
+            const todayFeesList = document.getElementById('todayFees');
+            todayFeesList.innerHTML = '';
+            
+            const todayPayments = todayFeesData.filter(fee => fee.paymentDate === today);
+            
+            if (todayPayments.length === 0) {
+                todayFeesList.innerHTML = '<tr><td colspan="3" class="text-center">আজকে কোনো বেতন আদায় হয়নি</td></tr>';
+            } else {
+                todayPayments.forEach(payment => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${payment.studentName}</td>
+                        <td>${payment.amountPaid}৳</td>
+                        <td>
+                            ${payment.paymentMethod === 'cash' ? 'ক্যাশ' : 
+                              payment.paymentMethod === 'bkash' ? 'বিকাশ' :
+                              payment.paymentMethod === 'nagad' ? 'নগদ' : 'ব্যাংক ট্রান্সফার'}
+                        </td>
+                    `;
+                    todayFeesList.appendChild(row);
+                });
+            }
+            
+            // Update charts
+            updateCharts();
+        }
+        
+        // Function to initialize charts
+        function initCharts() {
+            // Class distribution chart
+            const classCtx = document.getElementById('classChart').getContext('2d');
+            window.classChart = new Chart(classCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['শিশু জামাত', 'প্রথম জামাত', 'দ্বিতীয় জামাত', 'তৃতীয় জামাত', 'হিফজ বিভাগ'],
+                    datasets: [{
+                        label: 'ছাত্র সংখ্যা',
+                        backgroundColor: '#2c786c',
+                        borderColor: '#004445',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Today's collection chart
+            const todayCtx = document.getElementById('todayChart').getContext('2d');
+            window.todayChart = new Chart(todayCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['শিশু জামাত', 'প্রথম জামাত', 'দ্বিতীয় জামাত', 'তৃতীয় জামাত', 'হিফজ বিভাগ'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#2c786c',
+                            '#004445',
+                            '#f8b400',
+                            '#ff7e5f',
+                            '#6a4c93'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Function to update charts
+        function updateCharts() {
+            // Update class distribution chart
+            const classData = [
+                studentsData.shishu.length,
+                studentsData.first.length,
+                studentsData.second.length,
+                studentsData.third.length,
+                studentsData.hifz.length
+            ];
+            
+            window.classChart.data.datasets[0].data = classData;
+            window.classChart.update();
+            
+            // Update today's collection chart
+            const today = new Date().toISOString().split('T')[0];
+            const todayPayments = todayFeesData.filter(fee => fee.paymentDate === today);
+            
+            const todayData = [0, 0, 0, 0, 0];
+            const classMap = {
+                shishu: 0,
+                first: 1,
+                second: 2,
+                third: 3,
+                hifz: 4
+            };
+            
+            todayPayments.forEach(payment => {
+                const index = classMap[payment.class];
+                todayData[index] += parseInt(payment.amountPaid);
+            });
+            
+            window.todayChart.data.datasets[0].data = todayData;
+            window.todayChart.update();
+        }
+        
+        // Function to load data from localStorage
+        function loadLocalData() {
+            const savedStudents = localStorage.getItem('nurulQuranStudents');
+            const savedFees = localStorage.getItem('nurulQuranFees');
+            const savedTodayFees = localStorage.getItem('nurulQuranTodayFees');
+            
+            if (savedStudents) {
+                studentsData = JSON.parse(savedStudents);
+            }
+            
+            if (savedFees) {
+                feesData = JSON.parse(savedFees);
+            }
+            
+            if (savedTodayFees) {
+                todayFeesData = JSON.parse(savedTodayFees);
+            }
+        }
+        
+        // Function to save data to localStorage
+        function saveLocalData() {
+            localStorage.setItem('nurulQuranStudents', JSON.stringify(studentsData));
+            localStorage.setItem('nurulQuranFees', JSON.stringify(feesData));
+            localStorage.setItem('nurulQuranTodayFees', JSON.stringify(todayFeesData));
+        }
+        
+        // Function to sync data with Google Sheets
+        function syncData() {
+            if (!isOnline) {
+                showToast('সতর্কতা', 'আপনি অফলাইনে আছেন', 'warning');
+                return;
+            }
+            
+            showLoader();
+            
+            // First sync students
+            const allStudents = [];
+            Object.values(studentsData).forEach(students => {
+                allStudents.push(...students);
+            });
+            
+            // Then sync fees
+            const allFees = [...feesData];
+            
+            // Prepare data for sync
+            const syncData = {
+                students: allStudents,
+                fees: allFees,
+                todayFees: todayFeesData
+            };
+            
+            // Send to Google Apps Script
+            fetch(scriptURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(syncData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoader();
+                if (data.success) {
+                    showToast('সফল', 'ডাটা সিঙ্ক হয়েছে', 'success');
+                    lastSyncTime = new Date();
+                    document.getElementById('lastSyncTime').textContent = lastSyncTime.toLocaleString('bn-BD');
+                    
+                    // Clear pending sync
+                    pendingSync = [];
+                } else {
+                    showToast('ত্রুটি', 'সিঙ্ক ব্যর্থ হয়েছে', 'danger');
+                }
+            })
+            .catch(error => {
+                hideLoader();
+                showToast('ত্রুটি', 'সিঙ্ক ব্যর্থ হয়েছে', 'danger');
+                console.error('Error:', error);
+            });
+        }
+        
+        // Function to sync pending data
+        function syncPendingData() {
+            if (pendingSync.length === 0 || !isOnline) return;
+            
+            showLoader();
+            
+            // Process each pending item
+            const promises = pendingSync.map(item => {
+                if (item.type === 'student') {
+                    return syncStudentToSheet(item.data);
+                } else if (item.type === 'fee') {
+                    return syncFeeToSheet(item.data);
+                } else if (item.type === 'student-update') {
+                    return updateStudentInSheet(item.data);
+                } else if (item.type === 'student-delete') {
+                    return deleteStudentFromSheet(item.data);
+                }
+                return Promise.resolve();
+            });
+            
+            // Wait for all to complete
+            Promise.all(promises)
+                .then(() => {
+                    pendingSync = [];
+                    hideLoader();
+                    showToast('সফল', 'পেন্ডিং ডাটা সিঙ্ক হয়েছে', 'success');
+                    lastSyncTime = new Date();
+                    document.getElementById('lastSyncTime').textContent = lastSyncTime.toLocaleString('bn-BD');
+                })
+                .catch(error => {
+                    hideLoader();
+                    showToast('ত্রুটি', 'পেন্ডিং ডাটা সিঙ্ক ব্যর্থ হয়েছে', 'danger');
+                    console.error('Error:', error);
+                });
+        }
+        
+        // Function to sync a student to Google Sheet
+        function syncStudentToSheet(student, isUpdate = false) {
+            return new Promise((resolve, reject) => {
+                if (!isOnline) {
+                    reject('Offline');
+                    return;
+                }
+                
+                const sheetName = sheetsConfig.students[student.class];
+                const action = isUpdate ? 'update' : 'add';
+                
+                fetch(scriptURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: action,
+                        type: 'student',
+                        sheet: sheetName,
+                        data: student
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resolve(data);
+                    } else {
+                        reject(data.error);
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        }
+        
+        // Function to update a student in Google Sheet
+        function updateStudentInSheet(student) {
+            return syncStudentToSheet(student, true);
+        }
+        
+        // Function to delete a student from Google Sheet
+        function deleteStudentFromSheet(student) {
+            return new Promise((resolve, reject) => {
+                if (!isOnline) {
+                    reject('Offline');
+                    return;
+                }
+                
+                const sheetName = sheetsConfig.students[student.class];
+                
+                fetch(scriptURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        type: 'student',
+                        sheet: sheetName,
+                        data: student
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resolve(data);
+                    } else {
+                        reject(data.error);
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        }
+        
+        // Function to sync a fee payment to Google Sheet
+        function syncFeeToSheet(feePayment) {
+            return new Promise((resolve, reject) => {
+                if (!isOnline) {
+                    reject('Offline');
+                    return;
+                }
+                
+                // Add to main fees sheet
+                fetch(scriptURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'add',
+                        type: 'fee',
+                        sheet: sheetsConfig.fees,
+                        data: feePayment
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Also add to today's fees sheet
+                        return fetch(scriptURL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                action: 'add',
+                                type: 'fee',
+                                sheet: sheetsConfig.todayFees,
+                                data: feePayment
+                            })
+                        });
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resolve(data);
+                    } else {
+                        throw new Error(data.error);
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
+        }
+        
+        // Function to backup data
+        function backupData() {
+            // Create a JSON blob of all data
+            const backupData = {
+                students: studentsData,
+                fees: feesData,
+                todayFees: todayFeesData,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // Create download link
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nurul_quran_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('সফল', 'ব্যাকআপ ডাউনলোড শুরু হয়েছে', 'success');
+        }
+        
+        // Function to clear local data
+        function clearLocalData() {
+            if (!confirm('আপনি কি নিশ্চিত লোকাল ডাটা ক্লিয়ার করতে চান? এটি শুধু আপনার ডিভাইস থেকে ডাটা মুছে ফেলবে।')) {
+                return;
+            }
+            
+            localStorage.removeItem('nurulQuranStudents');
+            localStorage.removeItem('nurulQuranFees');
+            localStorage.removeItem('nurulQuranTodayFees');
+            
+            // Reload the app
+            location.reload();
+        }
+        
+        // Function to reset the app
+        function resetApp() {
+            if (!confirm('আপনি কি নিশ্চিত অ্যাপ রিসেট করতে চান? এটি সব ডাটা মুছে ফেলবে (লোকাল এবং অনলাইন উভয়ই)।')) {
+                return;
+            }
+            
+            // Clear local data
+            localStorage.removeItem('nurulQuranStudents');
+            localStorage.removeItem('nurulQuranFees');
+            localStorage.removeItem('nurulQuranTodayFees');
+            
+            // Send reset command to Google Sheet
+            if (isOnline) {
+                showLoader();
+                
+                fetch(scriptURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'reset'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoader();
+                    if (data.success) {
+                        showToast('সফল', 'অ্যাপ রিসেট হয়েছে', 'success');
+                        // Reload the app
+                        location.reload();
+                    } else {
+                        showToast('ত্রুটি', 'রিসেট ব্যর্থ হয়েছে', 'danger');
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    showToast('ত্রুটি', 'রিসেট ব্যর্থ হয়েছে', 'danger');
+                    console.error('Error:', error);
+                });
+            } else {
+                showToast('সফল', 'লোকাল ডাটা রিসেট হয়েছে', 'success');
+                // Reload the app
+                location.reload();
+            }
+        }
+        
+        // Function to show loader
+        function showLoader() {
+            document.querySelector('.preloader').style.display = 'flex';
+        }
+        
+        // Function to hide loader
+        function hideLoader() {
+            document.querySelector('.preloader').style.display = 'none';
+        }
+        
+        // Function to show toast notification
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set title and message
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            
+            // Set color based on type
+            const bgClass = `bg-${type}`;
+            toast.querySelector('.toast-header').className = `toast-header ${bgClass} text-white`;
+            
+            // Show toast
+            const bootstrapToast = new bootstrap.Toast(toast);
+            bootstrapToast.show();
+        }
+
+
+
+
+        // HTML ফাইলে এই ফাংশন ব্যবহার করুন
+async function syncToGoogleSheets(data) {
+  try {
+    const response = await fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    // no-cors মোডে response পড়া যাবে না, কিন্তু ডেটা সেভ হবে
+    console.log('Data sent (response not readable in no-cors mode)');
+    return { success: true };
+  } catch (error) {
+    console.error('Error:', error);
+    return { success: false, error: error.message };
+  }
+}
+    </script>
+</body>
+</html>
