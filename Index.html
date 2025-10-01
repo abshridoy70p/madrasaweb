@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>নুরুল কোরআন কওমী মাদ্রাসা - ম্যানেজমেন্ট</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", "Noto Sans", Arial, sans-serif; }
+    .app-header { background: #0d6efd; color: #fff; }
+    .menu-grid .card { cursor: pointer; transition: transform .1s ease; }
+    .menu-grid .card:hover { transform: translateY(-2px); }
+    .offline-badge { position: fixed; bottom: 12px; right: 12px; }
+    .spinner { display: none; }
+    .section { display: none; }
+    .section.active { display: block; }
+    .table-responsive { max-height: 420px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <header class="app-header py-3 shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <img src="https://i.imgur.com/5r4zv2l.png" alt="Logo" width="36" height="36" onerror="this.style.display='none'">
+        <h1 class="h5 m-0">নুরুল কোরআন কওমী মাদ্রাসা</h1>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span id="onlineStatus" class="badge bg-success">Online</span>
+        <button class="btn btn-sm btn-light" onclick="refreshAll()"><i class="fa fa-rotate"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-3">
+    <div class="menu-grid row g-3" id="home">
+      <div class="col-6 col-md-3">
+        <div class="card" onclick="showSection('studentsSection')">
+          <div class="card-body text-center">
+            <i class="fa fa-users fa-2x mb-2"></i>
+            <div class="fw-bold">ছাত্র ব্যবস্থাপনা</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card" onclick="showSection('paymentsSection')">
+          <div class="card-body text-center">
+            <i class="fa fa-hand-holding-dollar fa-2x mb-2"></i>
+            <div class="fw-bold">বেতন ব্যবস্থাপনা</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card" onclick="showSection('examsSection')">
+          <div class="card-body text-center">
+            <i class="fa fa-file-invoice-dollar fa-2x mb-2"></i>
+            <div class="fw-bold">পরীক্ষার ফি</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card" onclick="showSection('reportsSection')">
+          <div class="card-body text-center">
+            <i class="fa fa-chart-pie fa-2x mb-2"></i>
+            <div class="fw-bold">রিপোর্ট ও ড্যাশবোর্ড</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card" onclick="showSection('backupSection')">
+          <div class="card-body text-center">
+            <i class="fa fa-cloud-arrow-up fa-2x mb-2"></i>
+            <div class="fw-bold">ব্যাকআপ / ইম্পোর্ট-এক্সপোর্ট</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard quick cards -->
+    <div class="row g-3 my-3" id="dashboardCards">
+      <div class="col-6 col-md-3">
+        <div class="card text-bg-primary">
+          <div class="card-body">
+            <div class="small">মোট ছাত্র</div>
+            <div id="cardTotalStudents" class="fs-4 fw-bold">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-bg-success">
+          <div class="card-body">
+            <div class="small">আজকের আদায়</div>
+            <div id="cardCollectedToday" class="fs-4 fw-bold">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-bg-warning">
+          <div class="card-body">
+            <div class="small">চলতি মাসে মোট</div>
+            <div id="cardMonthToDate" class="fs-4 fw-bold">0</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card text-bg-danger">
+          <div class="card-body">
+            <div class="small">আনুমানিক বকেয়া</div>
+            <div id="cardOutstanding" class="fs-4 fw-bold">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Students Section -->
+    <section id="studentsSection" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 m-0">ছাত্র তালিকা</h2>
+        <div class="d-flex gap-2">
+          <input id="studentSearch" class="form-control form-control-sm" placeholder="সার্চ..." oninput="renderStudentTable()" />
+          <button class="btn btn-sm btn-primary" onclick="showStudentForm()"><i class="fa fa-plus"></i> নতুন ছাত্র</button>
+          <button class="btn btn-sm btn-secondary" onclick="showSection('home')"><i class="fa fa-home"></i></button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-striped align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>আইডি</th>
+              <th>নাম</th>
+              <th>ক্লাস</th>
+              <th>অভিভাবক</th>
+              <th>ফোন</th>
+              <th>স্ট্যাটাস</th>
+              <th>অ্যাকশন</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Payments Section -->
+    <section id="paymentsSection" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 m-0">বেতন আদায়</h2>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-secondary" onclick="loadUnpaidList()">বকেয়া তালিকা</button>
+          <button class="btn btn-sm btn-secondary" onclick="showSection('home')"><i class="fa fa-home"></i></button>
+        </div>
+      </div>
+      <form class="row g-2" onsubmit="submitPayment(event)">
+        <div class="col-12 col-md-3">
+          <label class="form-label small">ছাত্র</label>
+          <select id="payStudent" class="form-select form-select-sm" required></select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">বছর</label>
+          <input id="payYear" type="number" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">মাস</label>
+          <input id="payMonth" type="number" min="1" max="12" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">টাকার পরিমাণ</label>
+          <input id="payAmount" type="number" class="form-control form-control-sm" />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">পদ্ধতি</label>
+          <select id="payMethod" class="form-select form-select-sm">
+            <option>Cash</option>
+            <option>bkash</option>
+            <option>Nagad</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-1 d-grid">
+          <label class="form-label small">&nbsp;</label>
+          <button class="btn btn-sm btn-primary" type="submit">সেভ</button>
+        </div>
+      </form>
+      <div class="mt-3">
+        <h3 class="h6">আজকের লেনদেন</h3>
+        <ul id="todayPayments" class="list-group list-group-flush small"></ul>
+      </div>
+      <div class="mt-3">
+        <h3 class="h6">বকেয়া তালিকা (চলতি মাস)</h3>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>নাম</th>
+                <th>ক্লাস</th>
+                <th>ফোন</th>
+                <th>বকেয়া</th>
+                <th>কল</th>
+              </tr>
+            </thead>
+            <tbody id="unpaidTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exams Section -->
+    <section id="examsSection" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 m-0">পরীক্ষার ফি</h2>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-secondary" onclick="showSection('home')"><i class="fa fa-home"></i></button>
+        </div>
+      </div>
+      <form class="row g-2" onsubmit="submitExamFee(event)">
+        <div class="col-12 col-md-3">
+          <label class="form-label small">ছাত্র</label>
+          <select id="examStudent" class="form-select form-select-sm" required></select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">বছর</label>
+          <input id="examYear" type="number" class="form-control form-control-sm" required />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">টার্ম</label>
+          <select id="examTerm" class="form-select form-select-sm">
+            <option value="1st">১ম</option>
+            <option value="2nd">২য়</option>
+            <option value="3rd">৩য়</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">টাকার পরিমাণ</label>
+          <input id="examAmount" type="number" class="form-control form-control-sm" />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small">পদ্ধতি</label>
+          <select id="examMethod" class="form-select form-select-sm">
+            <option>Cash</option>
+            <option>bkash</option>
+            <option>Nagad</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-1 d-grid">
+          <label class="form-label small">&nbsp;</label>
+          <button class="btn btn-sm btn-primary" type="submit">সেভ</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Reports Section -->
+    <section id="reportsSection" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 m-0">রিপোর্ট ও ড্যাশবোর্ড</h2>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" onclick="downloadUnpaidPdf()">বকেয়া PDF</button>
+          <button class="btn btn-sm btn-secondary" onclick="showSection('home')"><i class="fa fa-home"></i></button>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 col-md-6">
+          <canvas id="chartMonthly"></canvas>
+        </div>
+        <div class="col-12 col-md-6">
+          <canvas id="chartClasswise"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Backup Section -->
+    <section id="backupSection" class="section">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 m-0">ব্যাকআপ / ইম্পোর্ট-এক্সপোর্ট</h2>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-secondary" onclick="showSection('home')"><i class="fa fa-home"></i></button>
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-sm btn-outline-success" onclick="exportJSON()">Export JSON</button>
+        <button class="btn btn-sm btn-outline-info" onclick="exportExcel()">Export Excel</button>
+        <label class="btn btn-sm btn-outline-primary mb-0">
+          Import JSON <input type="file" accept="application/json" hidden onchange="importJSON(this)" />
+        </label>
+        <button class="btn btn-sm btn-outline-danger" onclick="createDriveBackup()">Drive Backup</button>
+      </div>
+      <div class="small text-muted mt-2">অফলাইন মোডে কাজ করলে ডেটা লোকাল স্টোরেজে থাকবে; অনলাইনে এলে সিঙ্ক হবে।</div>
+    </section>
+  </main>
+
+  <div id="studentModal" class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">ছাত্র তথ্য</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="studentForm" class="row g-2">
+            <input type="hidden" id="sId" />
+            <div class="col-12">
+              <label class="form-label small">নাম</label>
+              <input id="sName" class="form-control form-control-sm" required />
+            </div>
+            <div class="col-6">
+              <label class="form-label small">ক্লাস</label>
+              <select id="sClass" class="form-select form-select-sm"></select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">স্ট্যাটাস</label>
+              <select id="sStatus" class="form-select form-select-sm">
+                <option>Active</option>
+                <option>Inactive</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">অভিভাবকের নাম</label>
+              <input id="sGuardian" class="form-control form-control-sm" />
+            </div>
+            <div class="col-6">
+              <label class="form-label small">অভিভাবকের নম্বর</label>
+              <input id="sPhone" class="form-control form-control-sm" />
+            </div>
+            <div class="col-12">
+              <label class="form-label small">ঠিকানা</label>
+              <input id="sAddress" class="form-control form-control-sm" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">বন্ধ</button>
+          <button class="btn btn-primary" onclick="saveStudent()">সংরক্ষণ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="offline-badge">
+    <span class="badge bg-secondary" id="offlineBadge" style="display:none">Offline mode</span>
+  </div>
+
+  <div class="spinner position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-light bg-opacity-50" id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.19.3/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    const state = {
+      students: [],
+      feeStructure: {},
+      today: '',
+      todayPayments: [],
+      offlineQueue: JSON.parse(localStorage.getItem('offlineQueue')||'[]')
+    };
+
+    const sections = ['home','studentsSection','paymentsSection','examsSection','reportsSection','backupSection'];
+    function showSection(id){
+      sections.forEach(s=>{
+        const el = document.getElementById(s);
+        if(!el) return;
+        if(s==='home') {
+          el.style.display = (id==='home')? '': '';
+        }
+      });
+      document.querySelectorAll('.section').forEach(el=>el.classList.remove('active'));
+      if(id==='home') {
+        document.querySelector('.menu-grid').style.display='';
+      } else {
+        document.querySelector('.menu-grid').style.display='none';
+        document.getElementById(id).classList.add('active');
+      }
+    }
+
+    function setLoading(v){
+      document.getElementById('loadingSpinner').style.display = v? 'flex':'none';
+    }
+
+    function refreshAll(){
+      loadInitial();
+      loadDashboard();
+    }
+
+    // Online/Offline Handling
+    async function checkOnline(){
+      try{
+        await google.script.run.withSuccessHandler(()=>{}).withFailureHandler(()=>{throw new Error()}).ping();
+        document.getElementById('onlineStatus').className='badge bg-success';
+        document.getElementById('onlineStatus').textContent='Online';
+        document.getElementById('offlineBadge').style.display='none';
+        await flushOfflineQueue();
+        return true;
+      }catch(e){
+        document.getElementById('onlineStatus').className='badge bg-secondary';
+        document.getElementById('onlineStatus').textContent='Offline';
+        document.getElementById('offlineBadge').style.display='inline-block';
+        return false;
+      }
+    }
+
+    async function flushOfflineQueue(){
+      if(!state.offlineQueue.length) return;
+      const queue = [...state.offlineQueue];
+      state.offlineQueue = [];
+      localStorage.setItem('offlineQueue', JSON.stringify(state.offlineQueue));
+      for(const item of queue){
+        try{
+          await runServer(item.fn, item.args);
+        }catch(err){
+          // put back if still failing
+          state.offlineQueue.push(item);
+        }
+      }
+      localStorage.setItem('offlineQueue', JSON.stringify(state.offlineQueue));
+      if(state.offlineQueue.length===0) refreshAll();
+    }
+
+    function enqueueOffline(fn, args){
+      state.offlineQueue.push({fn, args});
+      localStorage.setItem('offlineQueue', JSON.stringify(state.offlineQueue));
+    }
+
+    function runServer(name, args){
+      return new Promise((resolve, reject)=>{
+        google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...(args||[]));
+      });
+    }
+
+    // Initial Load
+    async function loadInitial(){
+      setLoading(true);
+      try{
+        const data = await runServer('getInitialData');
+        state.students = data.students || [];
+        state.feeStructure = data.feeStructure || {};
+        state.today = data.today;
+        state.todayPayments = data.todayPayments || [];
+        renderStudentTable();
+        renderStudentOptions();
+        renderTodayPayments();
+      }catch(e){
+        // fallback from local cache
+        const cached = JSON.parse(localStorage.getItem('cachedInitial')||'{}');
+        state.students = cached.students || [];
+        state.feeStructure = cached.feeStructure || {};
+        state.today = cached.today || '';
+        state.todayPayments = cached.todayPayments || [];
+        renderStudentTable();
+        renderStudentOptions();
+        renderTodayPayments();
+      }finally{
+        setLoading(false);
+      }
+    }
+
+    async function loadDashboard(){
+      try{
+        const d = await runServer('getDashboardSummary');
+        document.getElementById('cardTotalStudents').textContent = d.totalStudents;
+        document.getElementById('cardCollectedToday').textContent = d.collectedToday;
+        document.getElementById('cardMonthToDate').textContent = d.monthToDate;
+        document.getElementById('cardOutstanding').textContent = d.estimatedOutstanding;
+        localStorage.setItem('cachedDashboard', JSON.stringify(d));
+      }catch(e){
+        const d = JSON.parse(localStorage.getItem('cachedDashboard')||'{}');
+        if(d.totalStudents!=null) document.getElementById('cardTotalStudents').textContent = d.totalStudents;
+        if(d.collectedToday!=null) document.getElementById('cardCollectedToday').textContent = d.collectedToday;
+        if(d.monthToDate!=null) document.getElementById('cardMonthToDate').textContent = d.monthToDate;
+        if(d.estimatedOutstanding!=null) document.getElementById('cardOutstanding').textContent = d.estimatedOutstanding;
+      }
+    }
+
+    function renderStudentOptions(){
+      const opts = state.students.map(s=>`<option value="${s.id}">${s.name} (${s.className})</option>`).join('');
+      document.getElementById('payStudent').innerHTML = opts;
+      document.getElementById('examStudent').innerHTML = opts;
+      const classSet = Array.from(new Set(state.students.map(s=>s.className))).concat(Object.keys(state.feeStructure));
+      const uniqueClasses = Array.from(new Set(classSet));
+      document.getElementById('sClass').innerHTML = uniqueClasses.map(c=>`<option>${c}</option>`).join('');
+    }
+
+    function renderStudentTable(){
+      const q = (document.getElementById('studentSearch').value||'').toLowerCase();
+      const rows = state.students.filter(s=>
+        s.name.toLowerCase().includes(q) ||
+        (s.className||'').toLowerCase().includes(q) ||
+        (s.guardianPhone||'').includes(q)
+      ).slice(0,300);
+      document.getElementById('studentsTbody').innerHTML = rows.map(s=>
+        `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.className}</td><td>${s.guardianName||''}</td><td><a href="tel:${s.guardianPhone||''}">${s.guardianPhone||''}</a></td><td>${s.status||''}</td><td>
+        <button class='btn btn-sm btn-outline-primary' onclick='editStudent("${s.id}")'><i class="fa fa-pen"></i></button>
+        <button class='btn btn-sm btn-outline-danger' onclick='removeStudent("${s.id}")'><i class="fa fa-trash"></i></button>
+        </td></tr>`
+      ).join('');
+    }
+
+    function renderTodayPayments(){
+      document.getElementById('todayPayments').innerHTML = (state.todayPayments||[]).map(p=>{
+        const st = state.students.find(s=>s.id===p.studentId);
+        return `<li class='list-group-item d-flex justify-content-between align-items-center'>
+          <span>${st?st.name:''} - ${p.amount} (${p.method})</span>
+          <button class='btn btn-sm btn-outline-secondary' onclick='printReceipt("${p.receiptNo}")'>রশিদ</button>
+        </li>`;
+      }).join('');
+    }
+
+    function showStudentForm(){
+      document.getElementById('studentForm').reset();
+      document.getElementById('sId').value='';
+      new bootstrap.Modal(document.getElementById('studentModal')).show();
+    }
+    function editStudent(id){
+      const s = state.students.find(x=>x.id===id);
+      if(!s) return;
+      document.getElementById('sId').value=s.id;
+      document.getElementById('sName').value=s.name;
+      document.getElementById('sClass').value=s.className;
+      document.getElementById('sStatus').value=s.status||'Active';
+      document.getElementById('sGuardian').value=s.guardianName||'';
+      document.getElementById('sPhone').value=s.guardianPhone||'';
+      document.getElementById('sAddress').value=s.address||'';
+      new bootstrap.Modal(document.getElementById('studentModal')).show();
+    }
+
+    async function saveStudent(){
+      const payload = {
+        id: document.getElementById('sId').value || undefined,
+        name: document.getElementById('sName').value.trim(),
+        className: document.getElementById('sClass').value,
+        status: document.getElementById('sStatus').value,
+        guardianName: document.getElementById('sGuardian').value.trim(),
+        guardianPhone: document.getElementById('sPhone').value.trim(),
+        address: document.getElementById('sAddress').value.trim(),
+      };
+      const online = await checkOnline();
+      setLoading(true);
+      try{
+        if(payload.id){
+          if(online){ await runServer('updateStudent', [payload]); }
+          else enqueueOffline('updateStudent',[payload]);
+        }else{
+          if(online){ await runServer('createStudent', [payload]); }
+          else enqueueOffline('createStudent',[payload]);
+        }
+        await loadInitial();
+        bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide();
+      }catch(e){ alert(e.message||e); }
+      finally{ setLoading(false); }
+    }
+
+    async function removeStudent(id){
+      if(!confirm('ডিলিট করতে চান?')) return;
+      const online = await checkOnline();
+      try{
+        if(online){ await runServer('deleteStudent',[id]); }
+        else enqueueOffline('deleteStudent',[id]);
+        await loadInitial();
+      }catch(e){ alert(e.message||e); }
+    }
+
+    async function submitPayment(e){
+      e.preventDefault();
+      const payload = {
+        studentId: document.getElementById('payStudent').value,
+        year: Number(document.getElementById('payYear').value),
+        month: Number(document.getElementById('payMonth').value),
+        amount: Number(document.getElementById('payAmount').value||0) || undefined,
+        method: document.getElementById('payMethod').value
+      };
+      const online = await checkOnline();
+      try{
+        let res;
+        if(online){ res = await runServer('recordMonthlyPayment',[payload]); }
+        else { enqueueOffline('recordMonthlyPayment',[payload]); }
+        await loadInitial();
+        if(res && res.receiptNo) printReceipt(res.receiptNo);
+      }catch(e){ alert(e.message||e); }
+    }
+
+    async function loadUnpaidList(){
+      const now = new Date();
+      const month = now.getMonth()+1, year=now.getFullYear();
+      try{
+        const list = await runServer('getUnpaidStudents',[month, year]);
+        document.getElementById('unpaidTbody').innerHTML = list.map(u=>
+          `<tr><td>${u.name}</td><td>${u.className}</td><td><a href='tel:${u.guardianPhone||''}'>${u.guardianPhone||''}</a></td><td>${u.dueAmount}</td>
+          <td><a class='btn btn-sm btn-outline-success' href='tel:${u.guardianPhone||''}'><i class='fa fa-phone'></i></a></td></tr>`
+        ).join('');
+      }catch(e){ alert(e.message||e); }
+    }
+
+    async function submitExamFee(e){
+      e.preventDefault();
+      const payload = {
+        studentId: document.getElementById('examStudent').value,
+        year: Number(document.getElementById('examYear').value),
+        term: document.getElementById('examTerm').value,
+        amount: Number(document.getElementById('examAmount').value||0) || undefined,
+        method: document.getElementById('examMethod').value
+      };
+      const online = await checkOnline();
+      try{
+        if(online){ await runServer('recordExamFee',[payload]); }
+        else enqueueOffline('recordExamFee',[payload]);
+        await loadInitial();
+      }catch(e){ alert(e.message||e); }
+    }
+
+    async function ensureBanglaFont(){
+      if(localStorage.getItem('bnFontVFS')) return;
+      const url = 'https://cdn.jsdelivr.net/gh/googlefonts/noto-fonts/hinted/ttf/NotoSansBengali/NotoSansBengali-Regular.ttf';
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const b64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+      localStorage.setItem('bnFontVFS', b64);
+    }
+
+    async function getBanglaPdf(){
+      await ensureBanglaFont();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const b64 = localStorage.getItem('bnFontVFS');
+      doc.addFileToVFS('NotoSansBengali-Regular.ttf', b64);
+      doc.addFont('NotoSansBengali-Regular.ttf', 'NotoSansBengali', 'normal');
+      doc.setFont('NotoSansBengali');
+      return doc;
+    }
+
+    async function downloadUnpaidPdf(){
+      const now = new Date();
+      const month = now.getMonth()+1, year=now.getFullYear();
+      const list = await runServer('getUnpaidStudents',[month, year]);
+      const doc = await getBanglaPdf();
+      doc.setFontSize(14);
+      doc.text('বকেয়া তালিকা', 14, 16);
+      doc.autoTable({
+        startY: 22,
+        head: [["নাম","ক্লাস","ফোন","বকেয়া"]],
+        body: list.map(u=>[u.name,u.className,u.guardianPhone||'',String(u.dueAmount)])
+      });
+      doc.save('unpaid.pdf');
+    }
+
+    async function printReceipt(receiptNo){
+      const doc = await getBanglaPdf();
+      const logo = 'https://i.imgur.com/5r4zv2l.png';
+      try {
+        const r = await fetch(logo);
+        const b = await r.blob();
+        const reader = new FileReader();
+        const p = new Promise(res => { reader.onload=()=>res(reader.result); });
+        reader.readAsDataURL(b);
+        const dataUrl = await p;
+        doc.addImage(dataUrl, 'PNG', 14, 10, 18, 18);
+      } catch(_) {}
+      doc.setFontSize(16);
+      doc.text('নুরুল কোরআন কওমী মাদ্রাসা', 36, 18);
+      doc.setFontSize(12);
+      doc.text('বেতন রশিদ', 36, 26);
+      // QR code via canvas
+      const qrDiv = document.createElement('div');
+      const qr = new QRCode(qrDiv, { text: receiptNo, width: 100, height: 100, margin: 0 });
+      const img = qrDiv.querySelector('img') || qrDiv.querySelector('canvas');
+      let qrData = '';
+      if(img && img.tagName==='IMG') qrData = img.src; else if(img) qrData = img.toDataURL('image/png');
+      if(qrData) doc.addImage(qrData, 'PNG', 160, 12, 30, 30);
+      // Details
+      doc.setFontSize(11);
+      const nowStr = new Date().toLocaleString('bn-BD');
+      doc.text(`রশিদ নং: ${receiptNo}`, 14, 42);
+      doc.text(`তারিখ: ${nowStr}`, 14, 50);
+      doc.text('স্বাক্ষর: ____________________', 140, 50);
+      // Save
+      doc.save(`receipt-${receiptNo}.pdf`);
+    }
+
+    // Dashboard charts
+    async function renderCharts(){
+      try{
+        const data = await runServer('exportAllData');
+        const payments = data.payments||[];
+        const students = data.students||[];
+        const now = new Date();
+        const year = now.getFullYear();
+        const monthly = Array(12).fill(0);
+        payments.forEach(p=>{ if(p.year==year && p.month>=1 && p.month<=12) monthly[p.month-1]+=Number(p.amount||0); });
+        const ctx1 = document.getElementById('chartMonthly');
+        new Chart(ctx1, { type:'bar', data:{ labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets:[{ label:'Monthly Collection', data: monthly, backgroundColor:'#0d6efd' }] }, options:{ responsive:true, maintainAspectRatio:false } });
+        const classCounts = {};
+        students.forEach(s=>{ classCounts[s.className] = (classCounts[s.className]||0)+1; });
+        const ctx2 = document.getElementById('chartClasswise');
+        new Chart(ctx2, { type:'doughnut', data:{ labels:Object.keys(classCounts), datasets:[{ data:Object.values(classCounts) }] }, options:{ responsive:true, maintainAspectRatio:false } });
+      }catch(e){ /* ignore chart errors offline */ }
+    }
+
+    async function exportJSON(){
+      const data = await runServer('exportAllData');
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      saveAs(blob, 'export.json');
+    }
+    async function exportExcel(){
+      const data = await runServer('exportAllData');
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.students), 'Students');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.payments), 'Payments');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.examFees), 'ExamFees');
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.feeStructure), 'FeeStructure');
+      const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+      saveAs(new Blob([wbout], {type:'application/octet-stream'}), 'export.xlsx');
+    }
+    function importJSON(input){
+      const file = input.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const data = JSON.parse(reader.result);
+        try{
+          await runServer('importAllData',[data]);
+          await loadInitial();
+          alert('ইম্পোর্ট সম্পন্ন');
+        }catch(e){ alert(e.message||e); }
+      };
+      reader.readAsText(file);
+    }
+    async function createDriveBackup(){
+      try{
+        const res = await runServer('createDriveBackup');
+        alert('ব্যাকআপ সফল: ' + res.name);
+      }catch(e){ alert(e.message||e); }
+    }
+
+    // App start
+    (async function(){
+      showSection('home');
+      await loadInitial();
+      await loadDashboard();
+      setInterval(checkOnline, 5000);
+      renderCharts();
+    })();
+  </script>
+</body>
+</html>
+
