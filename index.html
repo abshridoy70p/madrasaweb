@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নুরুল কোরআন কওমী মাদ্রাসা - ব্যবস্থাপনা সিস্টেম</title>
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans Bengali', sans-serif;
+        }
+
+        :root {
+            --primary-color: #2c5f2d;
+            --secondary-color: #97bc62;
+            --accent-color: #ff6b35;
+            --dark-bg: #1a1a2e;
+            --light-bg: #f5f5f5;
+            --text-dark: #2d3436;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Content Area */
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(44, 95, 45, 0.25);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1e4620;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border: none;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            border: none;
+            color: var(--text-dark);
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+
+        /* Badge */
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: var(--text-dark);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Call Button */
+        .call-btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .call-btn:hover {
+            background: #128c7e;
+        }
+
+        /* Receipt Styles */
+        .receipt {
+            border: 2px solid #000;
+            padding: 30px;
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+        }
+
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .receipt-header h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .receipt-body {
+            margin: 20px 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .receipt-footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-line {
+            border-top: 2px solid #000;
+            margin-top: 50px;
+            padding-top: 10px;
+            text-align: center;
+            width: 200px;
+        }
+
+        /* Alert Messages */
+        .alert-custom {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-custom.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .pagination button.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="fas fa-mosque"></i> নুরুল কোরআন কওমী মাদ্রাসা</h1>
+                    <p class="subtitle">সম্পূর্ণ ডিজিটাল ব্যবস্থাপনা সিস্টেম</p>
+                </div>
+                <div>
+                    <span class="status-indicator" id="statusIndicator">
+                        <i class="fas fa-circle"></i>
+                        <span id="statusText">সংযুক্ত হচ্ছে...</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="nav-menu">
+            <button class="nav-btn active" onclick="showSection('dashboard')" style="color: var(--primary-color);">
+                <i class="fas fa-chart-line"></i>
+                <div>ড্যাশবোর্ড</div>
+            </button>
+            <button class="nav-btn" onclick="showSection('students')" style="color: #3498db;">
+                <i class="fas fa-user-graduate"></i>
+                <div>ছাত্র ব্যবস্থাপনা</div>
+            </button>
+            <button class="nav-btn" onclick="showSection('fees')" style="color: #e74c3c;">
+                <i class="fas fa-money-bill-wave"></i>
+                <div>বেতন ব্যবস্থাপনা</div>
+            </button>
+            <button class="nav-btn" onclick="showSection('exam')" style="color: #9b59b6;">
+                <i class="fas fa-file-alt"></i>
+                <div>পরীক্ষার ফি</div>
+            </button>
+            <button class="nav-btn" onclick="showSection('reports')" style="color: #f39c12;">
+                <i class="fas fa-chart-bar"></i>
+                <div>রিপোর্ট</div>
+            </button>
+            <button class="nav-btn" onclick="showSection('data')" style="color: #1abc9c;">
+                <i class="fas fa-database"></i>
+                <div>ডেটা ব্যবস্থাপনা</div>
+            </button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <h2><i class="fas fa-chart-line"></i> ড্যাশবোর্ড</h2>
+            <div class="dashboard-cards">
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 id="totalStudents">০</h3>
+                    <p>মোট ছাত্র</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h3 id="totalCollection">০ ৳</h3>
+                    <p>মোট আদায়</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h3 id="monthlyCollection">০ ৳</h3>
+                    <p>এই মাসের আদায়</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <h3 id="totalDue">০ ৳</h3>
+                    <p>মোট বকেয়া</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>ক্লাসভিত্তিক ছাত্র সংখ্যা</h4>
+                    <div class="chart-container">
+                        <canvas id="classChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>বেতন আদায়ের পরিসংখ্যান</h4>
+                    <div class="chart-container">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Section -->
+        <div id="students" class="content-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-user-graduate"></i> ছাত্র ব্যবস্থাপনা</h2>
+                <button class="btn btn-primary" onclick="showAddStudentModal()">
+                    <i class="fas fa-plus"></i> নতুন ছাত্র যোগ করুন
+                </button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="studentSearch" placeholder="নাম, আইডি বা মোবাইল নম্বর দিয়ে খুঁজুন..." onkeyup="searchStudents()">
+                <select class="form-select" style="max-width: 200px;" id="classFilter" onchange="filterStudentsByClass()">
+                    <option value="">সব ক্লাস</option>
+                    <option value="শিশু জামাত">শিশু জামাত</option>
+                    <option value="প্রথম জামাত">প্রথম জামাত</option>
+                    <option value="দ্বিতীয় জামাত">দ্বিতীয় জামাত</option>
+                    <option value="তৃতীয় জামাত">তৃতীয় জামাত</option>
+                    <option value="হিফজ বিভাগ">হিফজ বিভাগ</option>
+                </select>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>আইডি</th>
+                            <th>নাম</th>
+                            <th>পিতার নাম</th>
+                            <th>ক্লাস</th>
+                            <th>মোবাইল</th>
+                            <th>ঠিকানা</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="studentPagination"></div>
+        </div>
+
+        <!-- Fees Section -->
+        <div id="fees" class="content-section">
+            <h2><i class="fas fa-money-bill-wave"></i> বেতন ব্যবস্থাপনা</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h3 id="todayCollection">০ ৳</h3>
+                        <p>আজকের আদায়</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <h3 id="monthlyPaid">০</h3>
+                        <p>এই মাসে পরিশোধকারী</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <h3 id="monthlyDue">০</h3>
+                        <p>বকেয়া ছাত্র</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="feeSearch" placeholder="ছাত্রের নাম বা আইডি দিয়ে খুঁজুন..." onkeyup="searchFees()">
+                <button class="btn btn-primary" onclick="showPaymentModal()">
+                    <i class="fas fa-money-check-alt"></i> বেতন গ্রহণ করুন
+                </button>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>আইডি</th>
+                            <th>ছাত্রের নাম</th>
+                            <th>ক্লাস</th>
+                            <th>মাসিক বেতন</th>
+                            <th>শেষ পেমেন্ট</th>
+                            <th>বকেয়া</th>
+                            <th>স্ট্যাটাস</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="feeTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="feePagination"></div>
+        </div>
+
+        <!-- Exam Fee Section -->
+        <div id="exam" class="content-section">
+            <h2><i class="fas fa-file-alt"></i> পরীক্ষার ফি ব্যবস্থাপনা</h2>
+            
+            <div class="mb-4">
+                <div class="btn-group" role="group">
+                    <button class="btn btn-primary" onclick="setExamType('১ম পরীক্ষা')">১ম পরীক্ষা</button>
+                    <button class="btn btn-primary" onclick="setExamType('২য় পরীক্ষা')">২য় পরীক্ষা</button>
+                    <button class="btn btn-primary" onclick="setExamType('৩য় পরীক্ষা')">৩য় পরীক্ষা</button>
+                </div>
+                <button class="btn btn-success ms-3" onclick="showExamPaymentModal()">
+                    <i class="fas fa-money-check-alt"></i> পরীক্ষার ফি গ্রহণ
+                </button>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>নির্বাচিত পরীক্ষা:</strong> <span id="selectedExam">১ম পরীক্ষা</span>
+            </div>
+
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>আইডি</th>
+                            <th>ছাত্রের নাম</th>
+                            <th>ক্লাস</th>
+                            <th>পরীক্ষার ফি</th>
+                            <th>১ম পরীক্ষা</th>
+                            <th>২য় পরীক্ষা</th>
+                            <th>৩য় পরীক্ষা</th>
+                            <th>অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="examTableBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2><i class="fas fa-chart-bar"></i> রিপোর্ট ও বিশ্লেষণ</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" onclick="generateUnpaidReport()">
+                        <i class="fas fa-file-pdf"></i> বকেয়া তালিকা PDF
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-success w-100" onclick="generateClassReport()">
+                        <i class="fas fa-file-excel"></i> ক্লাস রিপোর্ট
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-warning w-100" onclick="generateMonthlyReport()">
+                        <i class="fas fa-calendar"></i> মাসিক রিপোর্ট
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-info w-100" onclick="generateExamReport()">
+                        <i class="fas fa-graduation-cap"></i> পরীক্ষা রিপোর্ট
+                    </button>
+                </div>
+            </div>
+
+            <h4>ক্লাসভিত্তিক বিশ্লেষণ</h4>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ক্লাস</th>
+                            <th>মোট ছাত্র</th>
+                            <th>বেতন পরিশোধিত</th>
+                            <th>বকেয়া</th>
+                            <th>মোট আদায়</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classReportBody">
+                        <!-- Data will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Data Management Section -->
+        <div id="data" class="content-section">
+            <h2><i class="fas fa-database"></i> ডেটা ব্যবস্থাপনা</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card p-4 mb-3">
+                        <h4><i class="fas fa-download"></i> ডেটা এক্সপোর্ট</h4>
+                        <p>সম্পূর্ণ ডেটাবেস ডাউনলোড করুন</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" onclick="exportToExcel()">
+                                <i class="fas fa-file-excel"></i> Excel ডাউনলোড
+                            </button>
+                            <button class="btn btn-success" onclick="exportToJSON()">
+                                <i class="fas fa-file-code"></i> JSON ডাউনলোড
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card p-4 mb-3">
+                        <h4><i class="fas fa-upload"></i> ডেটা ইম্পোর্ট</h4>
+                        <p>পূর্বের ডেটা পুনরুদ্ধার করুন</p>
+                        <input type="file" id="importFile" class="form-control mb-2" accept=".json">
+                        <button class="btn btn-warning" onclick="importData()">
+                            <i class="fas fa-upload"></i> ইম্পোর্ট করুন
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card p-4 mb-3">
+                        <h4><i class="fas fa-sync"></i> গুগল শীট সিঙ্ক</h4>
+                        <p>গুগল শীটে সব ডেটা সিঙ্ক করুন</p>
+                        <button class="btn btn-info" onclick="syncToGoogleSheets()">
+                            <i class="fab fa-google"></i> এখনই সিঙ্ক করুন
+                        </button>
+                        <p class="mt-2 small text-muted" id="lastSync">শেষ সিঙ্ক: কখনো হয়নি</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card p-4 mb-3">
+                        <h4><i class="fas fa-trash"></i> ডেটা রিসেট</h4>
+                        <p class="text-danger">সতর্ক: সব ডেটা মুছে যাবে!</p>
+                        <button class="btn btn-danger" onclick="resetAllData()">
+                            <i class="fas fa-exclamation-triangle"></i> সব ডেটা রিসেট করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal-overlay" id="addStudentModal">
+        <div class="modal-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>নতুন ছাত্র নিবন্ধন</h3>
+                <button class="btn btn-danger btn-sm" onclick="closeModal('addStudentModal')">&times;</button>
+            </div>
+            <form id="studentForm" onsubmit="addStudent(event)">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">ছাত্রের নাম *</label>
+                            <input type="text" class="form-control" id="studentName" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">পিতার নাম *</label>
+                            <input type="text" class="form-control" id="fatherName" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">ক্লাস *</label>
+                            <select class="form-select" id="studentClass" required>
+                                <option value="">নির্বাচন করুন</option>
+                                <option value="শিশু জামাত">শিশু জামাত</option>
+                                <option value="প্রথম জামাত">প্রথম জামাত</option>
+                                <option value="দ্বিতীয় জামাত">দ্বিতীয় জামাত</option>
+                                <option value="তৃতীয় জামাত">তৃতীয় জামাত</option>
+                                <option value="হিফজ বিভাগ">হিফজ বিভাগ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">মোবাইল নম্বর *</label>
+                            <input type="tel" class="form-control" id="studentMobile" required pattern="[0-9]{11}">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-label">ঠিকানা *</label>
+                            <textarea class="form-control" id="studentAddress" rows="2" required></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">ভর্তির তারিখ</label>
+                            <input type="date" class="form-control" id="admissionDate" value="">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                    <i class="fas fa-save"></i> সংরক্ষণ করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>বেতন গ্রহণ</h3>
+                <button class="btn btn-danger btn-sm" onclick="closeModal('paymentModal')">&times;</button>
+            </div>
+            <form id="paymentForm" onsubmit="processPayment(event)">
+                <div class="form-group">
+                    <label class="form-label">ছাত্র নির্বাচন করুন *</label>
+                    <select class="form-select" id="paymentStudent" required onchange="updatePaymentDetails()">
+                        <option value="">নির্বাচন করুন</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">মাস নির্বাচন করুন *</label>
+                    <input type="month" class="form-control" id="paymentMonth" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পরিমাণ (৳) *</label>
+                    <input type="number" class="form-control" id="paymentAmount" required readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পেমেন্ট তারিখ</label>
+                    <input type="date" class="form-control" id="paymentDate" value="">
+                </div>
+                <button type="submit" class="btn btn-success mt-3">
+                    <i class="fas fa-check"></i> পেমেন্ট সম্পন্ন করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Exam Payment Modal -->
+    <div class="modal-overlay" id="examPaymentModal">
+        <div class="modal-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>পরীক্ষার ফি গ্রহণ</h3>
+                <button class="btn btn-danger btn-sm" onclick="closeModal('examPaymentModal')">&times;</button>
+            </div>
+            <form id="examPaymentForm" onsubmit="processExamPayment(event)">
+                <div class="form-group">
+                    <label class="form-label">ছাত্র নির্বাচন করুন *</label>
+                    <select class="form-select" id="examPaymentStudent" required onchange="updateExamPaymentDetails()">
+                        <option value="">নির্বাচন করুন</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পরীক্ষা *</label>
+                    <input type="text" class="form-control" id="examType" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পরিমাণ (৳) *</label>
+                    <input type="number" class="form-control" id="examPaymentAmount" required readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পেমেন্ট তারিখ</label>
+                    <input type="date" class="form-control" id="examPaymentDate" value="">
+                </div>
+                <button type="submit" class="btn btn-success mt-3">
+                    <i class="fas fa-check"></i> পেমেন্ট সম্পন্ন করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal-overlay" id="receiptModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>বেতন রসিদ</h3>
+                <div>
+                    <button class="btn btn-primary btn-sm" onclick="printReceipt()">
+                        <i class="fas fa-print"></i> প্রিন্ট
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="closeModal('receiptModal')">&times;</button>
+                </div>
+            </div>
+            <div id="receiptContent" class="receipt print-area">
+                <!-- Receipt will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        // ==================== Configuration ====================
+        const CONFIG = {
+            GOOGLE_SCRIPT_URL: 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE', // এখানে আপনার Apps Script URL দিন
+            FEE_STRUCTURE: {
+                'শিশু জামাত': { monthly: 150, exam: 150 },
+                'প্রথম জামাত': { monthly: 200, exam: 200 },
+                'দ্বিতীয় জামাত': { monthly: 250, exam: 250 },
+                'তৃতীয় জামাত': { monthly: 300, exam: 300 },
+                'হিফজ বিভাগ': { monthly: 800, exam: 500 }
+            },
+            ITEMS_PER_PAGE: 10
+        };
+
+        // ==================== Data Storage ====================
+        let students = JSON.parse(localStorage.getItem('students') || '[]');
+        let payments = JSON.parse(localStorage.getItem('payments') || '[]');
+        let examPayments = JSON.parse(localStorage.getItem('examPayments') || '[]');
+        let currentPage = 1;
+        let currentExamType = '১ম পরীক্ষা';
+        let charts = {};
+
+        // ==================== Initialize ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Set default dates
+            document.getElementById('admissionDate').valueAsDate = new Date();
+            document.getElementById('paymentDate').valueAsDate = new Date();
+            document.getElementById('examPaymentDate').valueAsDate = new Date();
+            
+            // Set default month
+            const now = new Date();
+            document.getElementById('paymentMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            // Load data
+            loadDashboard();
+            loadStudents();
+            loadFees();
+            loadExamFees();
+            loadReports();
+            checkOnlineStatus();
+            
+            // Auto-sync every 5 minutes
+            setInterval(syncToGoogleSheets, 300000);
+        }
+
+        // ==================== Navigation ====================
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-btn').classList.add('active');
+            
+            // Refresh data when switching sections
+            if (sectionId === 'dashboard') loadDashboard();
+            if (sectionId === 'students') loadStudents();
+            if (sectionId === 'fees') loadFees();
+            if (sectionId === 'exam') loadExamFees();
+            if (sectionId === 'reports') loadReports();
+        }
+
+        // ==================== Student Management ====================
+        function showAddStudentModal() {
+            document.getElementById('studentForm').reset();
+            document.getElementById('admissionDate').valueAsDate = new Date();
+            openModal('addStudentModal');
+        }
+
+        function addStudent(event) {
+            event.preventDefault();
+            
+            const student = {
+                id: 'STD' + Date.now(),
+                name: document.getElementById('studentName').value,
+                fatherName: document.getElementById('fatherName').value,
+                class: document.getElementById('studentClass').value,
+                mobile: document.getElementById('studentMobile').value,
+                address: document.getElementById('studentAddress').value,
+                admissionDate: document.getElementById('admissionDate').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            students.push(student);
+            saveToLocalStorage();
+            syncToGoogleSheets();
+            
+            closeModal('addStudentModal');
+            loadStudents();
+            loadDashboard();
+            showAlert('success', 'ছাত্র সফলভাবে যোগ করা হয়েছে!');
+        }
+
+        function loadStudents() {
+            const tbody = document.getElementById('studentTableBody');
+            const startIndex = (currentPage - 1) * CONFIG.ITEMS_PER_PAGE;
+            const endIndex = startIndex + CONFIG.ITEMS_PER_PAGE;
+            const paginatedStudents = students.slice(startIndex, endIndex);
+            
+            tbody.innerHTML = paginatedStudents.map(student => `
+                <tr>
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.fatherName}</td>
+                    <td><span class="badge badge-success">${student.class}</span></td>
+                    <td>
+                        ${student.mobile}
+                        <button class="call-btn" onclick="makeCall('${student.mobile}')">
+                            <i class="fas fa-phone"></i> কল করুন
+                        </button>
+                    </td>
+                    <td>${student.address}</td>
+                    <td>
+                        <button class="action-btn btn-warning" onclick="editStudent('${student.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn btn-danger" onclick="deleteStudent('${student.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            renderPagination('studentPagination', students.length);
+            updateStudentDropdowns();
+        }
+
+        function searchStudents() {
+            const query = document.getElementById('studentSearch').value.toLowerCase();
+            const filtered = students.filter(s => 
+                s.name.toLowerCase().includes(query) ||
+                s.id.toLowerCase().includes(query) ||
+                s.mobile.includes(query)
+            );
+            renderFilteredStudents(filtered);
+        }
+
+        function filterStudentsByClass() {
+            const classFilter = document.getElementById('classFilter').value;
+            if (!classFilter) {
+                loadStudents();
+                return;
+            }
+            const filtered = students.filter(s => s.class === classFilter);
+            renderFilteredStudents(filtered);
+        }
+
+        function renderFilteredStudents(filtered) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = filtered.map(student => `
+                <tr>
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.fatherName}</td>
+                    <td><span class="badge badge-success">${student.class}</span></td>
+                    <td>
+                        ${student.mobile}
+                        <button class="call-btn" onclick="makeCall('${student.mobile}')">
+                            <i class="fas fa-phone"></i> কল করুন
+                        </button>
+                    </td>
+                    <td>${student.address}</td>
+                    <td>
+                        <button class="action-btn btn-warning" onclick="editStudent('${student.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn btn-danger" onclick="deleteStudent('${student.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteStudent(id) {
+            if (confirm('আপনি কি নিশ্চিত এই ছাত্রকে মুছে ফেলতে চান?')) {
+                students = students.filter(s => s.id !== id);
+                saveToLocalStorage();
+                syncToGoogleSheets();
+                loadStudents();
+                loadDashboard();
+                showAlert('success', 'ছাত্র মুছে ফেলা হয়েছে!');
+            }
+        }
+
+        function makeCall(mobile) {
+            window.location.href = `tel:${mobile}`;
+        }
+
+        // ==================== Fee Management ====================
+        function showPaymentModal() {
+            document.getElementById('paymentForm').reset();
+            document.getElementById('paymentDate').valueAsDate = new Date();
+            const now = new Date();
+            document.getElementById('paymentMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            openModal('paymentModal');
+        }
+
+        function updatePaymentDetails() {
+            const studentId = document.getElementById('paymentStudent').value;
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                const fee = CONFIG.FEE_STRUCTURE[student.class].monthly;
+                document.getElementById('paymentAmount').value = fee;
+            }
+        }
+
+        function processPayment(event) {
+            event.preventDefault();
+            
+            const payment = {
+                id: 'PAY' + Date.now(),
+                studentId: document.getElementById('paymentStudent').value,
+                month: document.getElementById('paymentMonth').value,
+                amount: parseFloat(document.getElementById('paymentAmount').value),
+                date: document.getElementById('paymentDate').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            payments.push(payment);
+            saveToLocalStorage();
+            syncToGoogleSheets();
+            
+            closeModal('paymentModal');
+            loadFees();
+            loadDashboard();
+            generateReceipt(payment);
+            showAlert('success', 'বেতন সফলভাবে গ্রহণ করা হয়েছে!');
+        }
+
+        function loadFees() {
+            const tbody = document.getElementById('feeTableBody');
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            tbody.innerHTML = students.map(student => {
+                const studentPayments = payments.filter(p => p.studentId === student.id);
+                const lastPayment = studentPayments[studentPayments.length - 1];
+                const monthlyFee = CONFIG.FEE_STRUCTURE[student.class].monthly;
+                const isPaid = studentPayments.some(p => p.month === currentMonth);
+                
+                return `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${monthlyFee} ৳</td>
+                        <td>${lastPayment ? lastPayment.date : 'কখনো পরিশোধ করা হয়নি'}</td>
+                        <td>${isPaid ? '০ ৳' : monthlyFee + ' ৳'}</td>
+                        <td>
+                            ${isPaid ? 
+                                '<span class="badge badge-success">পরিশোধিত</span>' : 
+                                '<span class="badge badge-danger">বকেয়া</span>'}
+                        </td>
+                        <td>
+                            <button class="action-btn btn-success" onclick="payForStudent('${student.id}')">
+                                <i class="fas fa-money-bill"></i> পরিশোধ
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updateFeeStats();
+        }
+
+        function updateFeeStats() {
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const today = now.toISOString().split('T')[0];
+            
+            const todayPayments = payments.filter(p => p.date === today);
+            const todayTotal = todayPayments.reduce((sum, p) => sum + p.amount, 0);
+            
+            const monthlyPaidCount = new Set(payments.filter(p => p.month === currentMonth).map(p => p.studentId)).size;
+            const monthlyDueCount = students.length - monthlyPaidCount;
+            
+            document.getElementById('todayCollection').textContent = `${todayTotal} ৳`;
+            document.getElementById('monthlyPaid').textContent = monthlyPaidCount;
+            document.getElementById('monthlyDue').textContent = monthlyDueCount;
+        }
+
+        function payForStudent(studentId) {
+            document.getElementById('paymentStudent').value = studentId;
+            updatePaymentDetails();
+            openModal('paymentModal');
+        }
+
+        // ==================== Exam Fee Management ====================
+        function setExamType(type) {
+            currentExamType = type;
+            document.getElementById('selectedExam').textContent = type;
+            document.getElementById('examType').value = type;
+        }
+
+        function showExamPaymentModal() {
+            document.getElementById('examPaymentForm').reset();
+            document.getElementById('examType').value = currentExamType;
+            document.getElementById('examPaymentDate').valueAsDate = new Date();
+            openModal('examPaymentModal');
+        }
+
+        function updateExamPaymentDetails() {
+            const studentId = document.getElementById('examPaymentStudent').value;
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                const fee = CONFIG.FEE_STRUCTURE[student.class].exam;
+                document.getElementById('examPaymentAmount').value = fee;
+            }
+        }
+
+        function processExamPayment(event) {
+            event.preventDefault();
+            
+            const payment = {
+                id: 'EXAM' + Date.now(),
+                studentId: document.getElementById('examPaymentStudent').value,
+                examType: document.getElementById('examType').value,
+                amount: parseFloat(document.getElementById('examPaymentAmount').value),
+                date: document.getElementById('examPaymentDate').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            examPayments.push(payment);
+            saveToLocalStorage();
+            syncToGoogleSheets();
+            
+            closeModal('examPaymentModal');
+            loadExamFees();
+            showAlert('success', 'পরীক্ষার ফি সফলভাবে গ্রহণ করা হয়েছে!');
+        }
+
+        function loadExamFees() {
+            const tbody = document.getElementById('examTableBody');
+            
+            tbody.innerHTML = students.map(student => {
+                const exam1 = examPayments.find(p => p.studentId === student.id && p.examType === '১ম পরীক্ষা');
+                const exam2 = examPayments.find(p => p.studentId === student.id && p.examType === '২য় পরীক্ষা');
+                const exam3 = examPayments.find(p => p.studentId === student.id && p.examType === '৩য় পরীক্ষা');
+                const examFee = CONFIG.FEE_STRUCTURE[student.class].exam;
+                
+                return `
+                    <tr>
+                        <td>${student.id}</td>
+                        <td>${student.name}</td>
+                        <td>${student.class}</td>
+                        <td>${examFee} ৳</td>
+                        <td>${exam1 ? '<span class="badge badge-success">✓</span>' : '<span class="badge badge-danger">✗</span>'}</td>
+                        <td>${exam2 ? '<span class="badge badge-success">✓</span>' : '<span class="badge badge-danger">✗</span>'}</td>
+                        <td>${exam3 ? '<span class="badge badge-success">✓</span>' : '<span class="badge badge-danger">✗</span>'}</td>
+                        <td>
+                            <button class="action-btn btn-success" onclick="payExamForStudent('${student.id}')">
+                                <i class="fas fa-money-bill"></i> পরিশোধ
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function payExamForStudent(studentId) {
+            document.getElementById('examPaymentStudent').value = studentId;
+            updateExamPaymentDetails();
+            openModal('examPaymentModal');
+        }
+
+        // ==================== Dashboard ====================
+        function loadDashboard() {
+            const totalStudents = students.length;
+            const totalCollection = payments.reduce((sum, p) => sum + p.amount, 0);
+            
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const monthlyCollection = payments.filter(p => p.month === currentMonth).reduce((sum, p) => sum + p.amount, 0);
+            
+            const monthlyPaidCount = new Set(payments.filter(p => p.month === currentMonth).map(p => p.studentId)).size;
+            const totalDue = (students.length - monthlyPaidCount) * 200; // Average fee
+            
+            document.getElementById('totalStudents').textContent = totalStudents;
+            document.getElementById('totalCollection').textContent = `${totalCollection} ৳`;
+            document.getElementById('monthlyCollection').textContent = `${monthlyCollection} ৳`;
+            document.getElementById('totalDue').textContent = `${totalDue} ৳`;
+            
+            renderCharts();
+        }
+
+        function renderCharts() {
+            // Class-wise student count
+            const classCounts = {};
+            students.forEach(s => {
+                classCounts[s.class] = (classCounts[s.class] || 0) + 1;
+            });
+            
+            if (charts.classChart) charts.classChart.destroy();
+            charts.classChart = new Chart(document.getElementById('classChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(classCounts),
+                    datasets: [{
+                        label: 'ছাত্র সংখ্যা',
+                        data: Object.values(classCounts),
+                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Payment statistics
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const paidCount = new Set(payments.filter(p => p.month === currentMonth).map(p => p.studentId)).size;
+            const dueCount = students.length - paidCount;
+            
+            if (charts.paymentChart) charts.paymentChart.destroy();
+            charts.paymentChart = new Chart(document.getElementById('paymentChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['পরিশোধিত', 'বকেয়া'],
+                    datasets: [{
+                        data: [paidCount, dueCount],
+                        backgroundColor: ['#43e97b', '#fa709a']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // ==================== Reports ====================
+        function loadReports() {
+            const tbody = document.getElementById('classReportBody');
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            const classes = ['শিশু জামাত', 'প্রথম জামাত', 'দ্বিতীয় জামাত', 'তৃতীয় জামাত', 'হিফজ বিভাগ'];
+            
+            tbody.innerHTML = classes.map(className => {
+                const classStudents = students.filter(s => s.class === className);
+                const paidStudents = classStudents.filter(s => 
+                    payments.some(p => p.studentId === s.id && p.month === currentMonth)
+                );
+                const totalCollection = payments
+                    .filter(p => classStudents.some(s => s.id === p.studentId) && p.month === currentMonth)
+                    .reduce((sum, p) => sum + p.amount, 0);
+                
+                return `
+                    <tr>
+                        <td>${className}</td>
+                        <td>${classStudents.length}</td>
+                        <td>${paidStudents.length}</td>
+                        <td>${classStudents.length - paidStudents.length}</td>
+                        <td>${totalCollection} ৳</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function generateUnpaidReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const now = new Date();
+            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            const unpaidStudents = students.filter(s => 
+                !payments.some(p => p.studentId === s.id && p.month === currentMonth)
+            );
+            
+            doc.setFontSize(18);
+            doc.text('Nurul Quran Qawmi Madrasa', 105, 20, { align: 'center' });
+            doc.setFontSize(14);
+            doc.text('Unpaid Students Report', 105, 30, { align: 'center' });
+            doc.setFontSize(10);
+            doc.text(`Month: ${currentMonth}`, 105, 40, { align: 'center' });
+            
+            const tableData = unpaidStudents.map((s, i) => [
+                i + 1,
+                s.name,
+                s.fatherName,
+                s.class,
+                s.mobile,
+                CONFIG.FEE_STRUCTURE[s.class].monthly + ' Tk'
+            ]);
+            
+            doc.autoTable({
+                startY: 50,
+                head: [['#', 'Student Name', 'Father Name', 'Class', 'Mobile', 'Due Amount']],
+                body: tableData
+            });
+            
+            doc.save(`unpaid-report-${currentMonth}.pdf`);
+            showAlert('success', 'রিপোর্ট ডাউনলোড সম্পন্ন হয়েছে!');
+        }
+
+        function generateClassReport() {
+            showAlert('info', 'ক্লাস রিপোর্ট তৈরি হচ্ছে...');
+            // Implementation similar to generateUnpaidReport
+        }
+
+        function generateMonthlyReport() {
+            showAlert('info', 'মাসিক রিপোর্ট তৈরি হচ্ছে...');
+            // Implementation similar to generateUnpaidReport
+        }
+
+        function generateExamReport() {
+            showAlert('info', 'পরীক্ষা রিপোর্ট তৈরি হচ্ছে...');
+            // Implementation similar to generateUnpaidReport
+        }
+
+        // ==================== Receipt Generation ====================
+        function generateReceipt(payment) {
+            const student = students.find(s => s.id === payment.studentId);
+            const receiptContent = `
+                <div class="receipt-header">
+                    <h2>নুরুল কোরআন কওমী মাদ্রাসা</h2>
+                    <p>বেতন রসিদ</p>
+                    <p>রসিদ নং: ${payment.id}</p>
+                </div>
+                <div class="receipt-body">
+                    <div class="receipt-row">
+                        <strong>ছাত্রের নাম:</strong>
+                        <span>${student.name}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <strong>পিতার নাম:</strong>
+                        <span>${student.fatherName}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <strong>ক্লাস:</strong>
+                        <span>${student.class}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <strong>মাস:</strong>
+                        <span>${payment.month}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <strong>পরিমাণ:</strong>
+                        <span>${payment.amount} ৳</span>
+                    </div>
+                    <div class="receipt-row">
+                        <strong>তারিখ:</strong>
+                        <span>${payment.date}</span>
+                    </div>
+                </div>
+                <div class="receipt-footer">
+                    <div class="signature-line">ছাত্রের স্বাক্ষর</div>
+                    <div class="signature-line">প্রাপকের স্বাক্ষর</div>
+                </div>
+            `;
+            
+            document.getElementById('receiptContent').innerHTML = receiptContent;
+            openModal('receiptModal');
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        // ==================== Data Management ====================
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            const studentsWS = XLSX.utils.json_to_sheet(students);
+            XLSX.utils.book_append_sheet(wb, studentsWS, 'Students');
+            
+            const paymentsWS = XLSX.utils.json_to_sheet(payments);
+            XLSX.utils.book_append_sheet(wb, paymentsWS, 'Payments');
+            
+            const examPaymentsWS = XLSX.utils.json_to_sheet(examPayments);
+            XLSX.utils.book_append_sheet(wb, examPaymentsWS, 'Exam Payments');
+            
+            XLSX.writeFile(wb, `madrasa-data-${new Date().toISOString().split('T')[0]}.xlsx`);
+            showAlert('success', 'ডেটা সফলভাবে এক্সপোর্ট হয়েছে!');
+        }
+
+        function exportToJSON() {
+            const data = {
+                students,
+                payments,
+                examPayments,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `madrasa-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            showAlert('success', 'ডেটা সফলভাবে এক্সপোর্ট হয়েছে!');
+        }
+
+        function importData() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) {
+                showAlert('warning', 'অনুগ্রহ করে একটি ফাইল নির্বাচন করুন!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    students = data.students || [];
+                    payments = data.payments || [];
+                    examPayments = data.examPayments || [];
+                    saveToLocalStorage();
+                    syncToGoogleSheets();
+                    loadDashboard();
+                    loadStudents();
+                    loadFees();
+                    loadExamFees();
+                    showAlert('success', 'ডেটা সফলভাবে ইম্পোর্ট হয়েছে!');
+                } catch (error) {
+                    showAlert('danger', 'ডেটা ইম্পোর্টে সমস্যা হয়েছে!');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAllData() {
+            if (confirm('সতর্কতা: এই কাজটি সব ডেটা মুছে ফেলবে। আপনি কি নিশ্চিত?')) {
+                if (confirm('আপনি কি সত্যিই সব ডেটা মুছে ফেলতে চান? এটি পুনরুদ্ধার করা যাবে না!')) {
+                    students = [];
+                    payments = [];
+                    examPayments = [];
+                    saveToLocalStorage();
+                    loadDashboard();
+                    loadStudents();
+                    loadFees();
+                    loadExamFees();
+                    showAlert('success', 'সব ডেটা রিসেট করা হয়েছে!');
+                }
+            }
+        }
+
+        // ==================== Google Sheets Integration ====================
+        async function syncToGoogleSheets() {
+            if (!CONFIG.GOOGLE_SCRIPT_URL || CONFIG.GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                console.log('Google Apps Script URL not configured');
+                return;
+            }
+            
+            try {
+                const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'sync',
+                        students,
+                        payments,
+                        examPayments
+                    })
+                });
+                
+                document.getElementById('lastSync').textContent = `শেষ সিঙ্ক: ${new Date().toLocaleString('bn-BD')}`;
+                console.log('Data synced to Google Sheets');
+            } catch (error) {
+                console.error('Sync error:', error);
+            }
+        }
+
+        async function loadFromGoogleSheets() {
+            if (!CONFIG.GOOGLE_SCRIPT_URL || CONFIG.GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                return;
+            }
+            
+            try {
+                const response = await fetch(CONFIG.GOOGLE_SCRIPT_URL + '?action=load');
+                const data = await response.json();
+                
+                if (data.students) students = data.students;
+                if (data.payments) payments = data.payments;
+                if (data.examPayments) examPayments = data.examPayments;
+                
+                saveToLocalStorage();
+                loadDashboard();
+                loadStudents();
+                loadFees();
+                loadExamFees();
+            } catch (error) {
+                console.error('Load error:', error);
+            }
+        }
+
+        // ==================== Utility Functions ====================
+        function saveToLocalStorage() {
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('payments', JSON.stringify(payments));
+            localStorage.setItem('examPayments', JSON.stringify(examPayments));
+        }
+
+        function updateStudentDropdowns() {
+            const options = students.map(s => 
+                `<option value="${s.id}">${s.name} - ${s.class}</option>`
+            ).join('');
+            
+            document.getElementById('paymentStudent').innerHTML = '<option value="">নির্বাচন করুন</option>' + options;
+            document.getElementById('examPaymentStudent').innerHTML = '<option value="">নির্বাচন করুন</option>' + options;
+        }
+
+        function renderPagination(containerId, totalItems) {
+            const totalPages = Math.ceil(totalItems / CONFIG.ITEMS_PER_PAGE);
+            const container = document.getElementById(containerId);
+            
+            let html = '';
+            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">«</button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">»</button>`;
+            
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadStudents();
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-custom show`;
+            alertDiv.innerHTML = `<strong>${type === 'success' ? 'সফল!' : type === 'danger' ? 'ত্রুটি!' : 'তথ্য:'}</strong> ${message}`;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        function checkOnlineStatus() {
+            const updateStatus = () => {
+                const isOnline = navigator.onLine;
+                const indicator = document.getElementById('statusIndicator');
+                const text = document.getElementById('statusText');
+                
+                if (isOnline) {
+                    indicator.className = 'status-indicator status-online';
+                    text.textContent = 'অনলাইন';
+                } else {
+                    indicator.className = 'status-indicator status-offline';
+                    text.textContent = 'অফলাইন';
+                }
+            };
+            
+            window.addEventListener('online', updateStatus);
+            window.addEventListener('offline', updateStatus);
+            updateStatus();
+        }
+    </script>
+</body>
+</html>
